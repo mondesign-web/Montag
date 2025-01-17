@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Profile extends Model
+{
+    use HasFactory;
+    
+    protected $fillable = [
+        'user_id',
+        'name',
+        'title',
+        'bio',
+        'photo_url',
+        'social_links',
+        'facebook',
+        'instagram',
+        'whatsapp',
+        'linkedin',
+        'nfc_tag_id',
+        'background_color',
+        'qr_code',
+        'profile_link',
+    ];
+
+    /*
+    protected $casts = [
+        'social_links' => 'array',
+    ];
+*/
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
