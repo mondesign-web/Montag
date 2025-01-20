@@ -24,6 +24,9 @@ class Profile extends Model
         'background_color',
         'qr_code',
         'profile_link',
+        'email',
+        'phone',
+        'address',
     ];
 
     /*

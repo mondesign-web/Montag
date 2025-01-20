@@ -13,9 +13,26 @@ class ProfileController extends Controller
    
     public function create()
     {
-        return view('profiles.create'); // Retourne la vue pour créer un profil
+        // Récupérez le nom de l'utilisateur connecté
+        $user = auth()->user();
+
+        // Vérifiez que l'utilisateur est connecté et récupérez la première lettre de son nom
+        $nameUser = $user ? $this->getFirstLetter($user->name) : '';
+
+        // Passez la variable à la vue
+        return view('profiles.create', compact('nameUser'));
+       
     }
 
+    public function getFirstLetter($name){
+        // Récupérer la première lettre
+        $firstLetter = strtoupper(substr($name, 0, 1));
+
+        return $firstLetter;
+    }
+
+    
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -29,6 +46,9 @@ class ProfileController extends Controller
             'linkedin' => 'nullable|url',
             'background_color' => 'nullable|string|max:7',
             'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id',
+            'email' => 'required|email|max:100',
+            'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/', // Valide un numéro de téléphone (format international)
+            'address' => 'nullable|string|max:255'
             //'qr_code' => 'nullable|string',
             //'profile_link' => 'nullable|url',
         ]);
@@ -39,8 +59,6 @@ class ProfileController extends Controller
             $photoPath = $request->file('photo')->store('profile_photos', 'public');
         }
 
-        //dd($request->all());
-        
         $profile = Profile::create([
             'user_id' => auth()->id(), // Associe l'utilisateur connecté
             'name' => $request->name,
@@ -53,33 +71,25 @@ class ProfileController extends Controller
             'linkedin' => $request->linkedin,
             'background_color' => $request->background_color,
             'nfc_tag_id' => $request->nfc_tag_id,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
            // 'qr_code' => $request->qr_code,
            // 'profile_link'=> $request->profile_link,
         ]);
 
-        //dd($profile);
             $profileUrl = route('profiles.show', $profile->id);
-            // Generate the QR Code as a PNG image
-           //$qrCodeImage = QrCode::format('png')->size(200)->generate($profileUrl);
-           // dd($qrCodeImage);
-            // Save the QR Code image to storage
 
-             // Utiliser SVG au lieu de PNG pour éviter Imagick
+            // Utiliser SVG au lieu de PNG pour éviter Imagick
             $qrCodeImage = QrCode::format('svg')->size(200)->generate($profileUrl);
-
             // Enregistrer le fichier QR Code
             $qrCodePath = "qrcodes/profile-{$profile->id}.svg";
             Storage::disk('public')->put($qrCodePath, $qrCodeImage);
-
-            //$qrCodePath = "qrcodes/profile-{$profile->id}.png";
-            //Storage::disk('public')->put($qrCodePath, $qrCodeImage);
-            //dd(Storage::exists('public/' . $qrCodePath));
-            // Update the profile with the QR Code image path and URL
             $profile->update([
                 'qr_code' => $qrCodePath, // Path to the QR Code image
                 'profile_link' => $profileUrl, // URL the QR Code points to
             ]);
-            //dd($profile);
+            
         return redirect()->route('profiles.show', $profile->id)->with('success', 'Profile created successfully!');
         
 
@@ -87,12 +97,14 @@ class ProfileController extends Controller
 
     public function show(Profile $profile)
     {
-        return view('profiles.show', compact('profile'));
+        $nameUser = $this->getFirstLetter($profile->name);
+
+        return view('profiles.show', compact('profile', 'nameUser'));
     }
 
 
     public function update(Request $request, Profile $profile)
-{
+    {
     // Validation des données entrantes
     $request->validate([
         'name' => 'required|string|max:255',
@@ -104,6 +116,9 @@ class ProfileController extends Controller
         'whatsapp' => 'nullable|url',
         'linkedin' => 'nullable|url',
         'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
+        'email' => 'required|email|max:100',
+        'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/', // Valide un numéro de téléphone (format international)
+        'address' => 'nullable|string|max:255'
     ]);
 
     // Gérer le téléchargement de la nouvelle photo, si nécessaire
@@ -127,16 +142,20 @@ class ProfileController extends Controller
         'whatsapp' => $request->whatsapp,
         'linkedin' => $request->linkedin,
         'nfc_tag_id' => $request->nfc_tag_id,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'address' => $request->address,
+        // 'qr_code' => $request->qr_code, // Ne pas modifier le QR Code
     ]);
 
     // Rediriger avec un message de succès
     return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
 }
 
-public function edit(Profile $profile)
-{
-    return view('profiles.edit', compact('profile'));
-}
+    public function edit(Profile $profile)
+    {
+        return view('profiles.edit', compact('profile'));
+    }
 
 /*
 public function generateQrCode($profileId)
@@ -155,14 +174,50 @@ public function generateQrCode($profileId)
     }
 */
 
-public function index()
-{
-    // Récupérer uniquement les profils de l'utilisateur connecté
-    $profiles = Profile::where('user_id', auth()->id())->get();
+    public function index()
+    {
+        // Récupérer uniquement les profils de l'utilisateur connecté
+        $profiles = Profile::where('user_id', auth()->id())->get();
 
-    // Retourner la vue avec les profils
-    return view('profiles.index', compact('profiles'));
-}
+        // Retourner la vue avec les profils
+        return view('profiles.index', compact('profiles'));
+    }
+
+    public function list()
+    {
+        // Récupérer uniquement les profils de l'utilisateur connecté
+        $profiles = Profile::where('user_id', auth()->id())->get();
+
+        // Retourner la vue avec les profils
+        return view('home', compact('profiles'));
+    }
+
+
+    public function destroy($id)
+    {
+        // Trouvez le profil de l'utilisateur authentifié
+        $profile = Profile::where('user_id', auth()->id())->findOrFail($id);
+
+        // Supprimez l'image associée si nécessaire
+        if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
+            \Storage::disk('public')->delete($profile->photo_url);
+        }
+         // Delete the QR code file if it exists
+        if ($profile->qr_code && \Storage::disk('public')->exists($profile->qr_code)) {
+          \Storage::disk('public')->delete($profile->qr_code);
+        } else {
+        // Log an error if the QR code file was not found or couldn't be deleted
+        Log::error('Le QR Code n\'a pas été trouvé ou supprimé', [
+            'qr_code_path' => $profile->qr_code,
+        ]);
+    }
+
+        
+        // Supprimez le profil
+        $profile->delete();
+
+        return redirect()->route('profiles.index')->with('success', 'Profil supprimé avec succès.');
+    }
 
 }
     

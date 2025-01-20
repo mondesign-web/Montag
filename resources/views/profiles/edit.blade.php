@@ -42,7 +42,15 @@
                 @endif
             </div>
 
-            
+            <div class="mb-4">
+            <input name="email" type="email" value="{{ $profile->email }}" placeholder="Email Address"
+                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+                <input name="address" type="text" value="{{ $profile->address }}" placeholder="Adresse "
+                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+                <input name="phone" type="tel" value="{{ $profile->phone }}" placeholder="Phone"
+                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+                
+            </div>
              
             <!-- Champs pour les réseaux sociaux -->
             <div class="mb-4">

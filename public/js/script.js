@@ -67,10 +67,11 @@ const tabButtons = document.querySelectorAll('.tab-btn');
         activateTab(0);
 */
         // Mise à jour des champs de texte en temps réel
+        
         function updatePreview(previewId, value) {
             document.getElementById(previewId).textContent = value || ' ';
         }
-
+/*
         // Prévisualisation de la photo de profil
       
         function previewPhoto(event) {
@@ -81,6 +82,27 @@ const tabButtons = document.querySelectorAll('.tab-btn');
                 document.getElementById('profilePhotoPreview').src = reader.result;
             };
             reader.readAsDataURL(event.target.files[0]);
+        }
+*/
+
+        function previewPhoto(event) {
+            const fileInput = event.target; // L'élément input type="file"
+            const reader = new FileReader(); // Crée une instance de FileReader
+
+            reader.onload = function () {
+                const profilePhotoPreview = document.getElementById('profilePhotoTemplate'); // Image d'aperçu
+                const avatarInitial = document.getElementById('avatar-initial'); // Conteneur de l'initiale
+
+                // Met à jour l'aperçu de l'image
+                profilePhotoPreview.src = reader.result;
+                profilePhotoPreview.classList.remove('hidden'); // Affiche l'image
+                avatarInitial.classList.add('hidden'); // Masque l'initiale
+            };
+
+            // Vérifiez si un fichier est sélectionné
+            if (fileInput.files && fileInput.files[0]) {
+                reader.readAsDataURL(fileInput.files[0]); // Charge l'image
+            }
         }
 
         function showSocialInput(platform) {
@@ -94,23 +116,47 @@ const tabButtons = document.querySelectorAll('.tab-btn');
             inputWrapper.className = 'flex items-center gap-2';
 
             inputWrapper.innerHTML = `
-        <img src="https://img.icons8.com/${getIconPath(platform)}" alt="${platform}" class="w-8 h-8">
+        <img src="https://img.icons8.com/${getIconPath(platform)}" alt="${platform}" class="w-8 h-8 mt-3">
         <input type="url" name="${platform}" placeholder="Enter ${platform} URL"
-            class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
+            class="block w-full mt-3 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
             oninput="updateSocialLink('${platform}', this.value)">
-        <button onclick="removeSocialInput('${platform}')" class="text-red-500">Remove</button>
+        <button onclick="removeSocialInput('${platform}')" class="text-red-500 mt-3">Remove</button>
     `;
 
             socialInputs.appendChild(inputWrapper);
         }
 
-
+        /*
         function updateSocialLink(platform, value) {
             const iconLink = document.querySelector(`#preview-${platform}`);
             if (iconLink) {
                 iconLink.href = value || "#"; // Mettre à jour le lien ou définir un lien vide par défaut
             }
         }
+        */
+        // Update the preview section dynamically
+    function updateSocialLink(platform, url) {
+        const previewSection = document.getElementById(`preview-${platform}`);
+
+        if (!previewSection) {
+            // Create the icon in the preview if it doesn't exist
+            const previewContainer = document.getElementById('social-preview');
+            const iconWrapper = document.createElement('li');
+            iconWrapper.id = `preview-${platform}`;
+            iconWrapper.className = 'flex flex-col items-center justify-around';
+            iconWrapper.innerHTML = `
+                <a href="${url}" target="_blank">
+                    <img src="https://img.icons8.com/${getIconPath(platform)}" alt="${platform}" class="w-10 h-10">
+                </a>
+            `;
+            previewContainer.appendChild(iconWrapper);
+        } else {
+            // Update the URL of the existing icon
+            const link = previewSection.querySelector('a');
+            link.href = url;
+        }
+}
+
 
         function removeSocialInput(platform) {
             const inputWrapper = document.getElementById(`input-${platform}`);

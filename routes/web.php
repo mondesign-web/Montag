@@ -28,7 +28,8 @@ Route::get('/card', function () {
 })->middleware(['auth'])->name('card');
 */
 Route::get('/profiles', [ProfileController::class, 'index'])->middleware('auth')->name('profiles.index');
-
+Route::get('/', [ProfileController::class, 'list'])->middleware('auth')->name('home');
+Route::delete('/profiles/{id}', [ProfileController::class, 'destroy'])->name('profiles.destroy');
 
 
 Route::get('/dashboard2', function () {

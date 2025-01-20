@@ -23,6 +23,8 @@ class User extends Authenticatable
         'password',
     ];
 
+    
+
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);

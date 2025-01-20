@@ -28,7 +28,9 @@ class CreateProfilesTable extends Migration
             $table->string('background_color')->nullable();
             $table->string('qr_code')->nullable();
             $table->string('profile_link')->nullable();
-            
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
