@@ -6,17 +6,20 @@
     <div class="sidebar fixed top-0 bottom-0 lg:left-0 p-2 w-[300px] overflow-y-auto text-center bg-gray-900 lg:block hidden z-50">
         <div class="text-gray-100 text-xl">
             <div class="p-2.5 mt-1 flex items-center">
-                <img src="{{ asset('img/montagBlack.png') }}" class="h-50 w-44" alt="Logo">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('img/montagBlack.png') }}" class="h-50 w-44" alt="Logo">
+                </a>
+                
                 
                 <i class="bi bi-x cursor-pointer ml-16 lg:hidden" onclick="openSidebar()"></i>
             </div>
             <div class="my-2 bg-gray-600 h-[1px]"></div>
         </div>
-        <a href="/" class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+        <a href="{{route('home')}}" class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-house-door-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
         </a>
-        <a href="/profiles" class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+        <a href="{{ route('profiles.index') }}" class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-credit-card-2-front-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">My Cards</span>
         </a>
@@ -31,9 +34,9 @@
             </div>
         </div>
         <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold hidden" id="submenu">
-            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Social</h1>
-            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Personal</h1>
-            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Friends</h1>
+            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Link</h1>
+            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">QR code</h1>
+            
         </div>
       
 <a href="{{ route('logout') }}"

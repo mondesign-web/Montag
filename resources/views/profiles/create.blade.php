@@ -186,11 +186,6 @@
             <div class="col-span-4 sm:col-span-4">
                 <div
                     class="max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900">
-                    <!--div class="rounded-t-lg h-32 overflow-hidden">
-                                                                                        <img class="object-cover object-top w-full"
-                                                                                            src='https://images.unsplash.com/photo-1606942040878-9a852c5045a3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-                                                                                            alt='Mountain'>
-                                                                                    </div-->
                     <div id="profileTemplate"
                         class="w-full h-40 rounded-lg text-center text-white flex items-center justify-center shadow-lg"
                         style="background-color: #111827;">
