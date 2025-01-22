@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use JeroenDesloovere\VCard\VCard;
+
 
 class ProfileController extends Controller
 {
@@ -174,6 +176,7 @@ public function generateQrCode($profileId)
     }
 */
 
+/*
     public function index()
     {
         // Récupérer uniquement les profils de l'utilisateur connecté
@@ -182,7 +185,28 @@ public function generateQrCode($profileId)
         // Retourner la vue avec les profils
         return view('profiles.index', compact('profiles'));
     }
+*/  
+    public function index(Request $request)
+    {
+        $query = Profile::where('user_id', auth()->id());
 
+        // Filtrer par recherche si un paramètre est fourni
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%')
+                ->orWhere('title', 'like', '%' . $request->search . '%')
+                ->orWhere('address', 'like', '%' . $request->search . '%');
+                });
+        }
+
+        // Récupérer les profils après filtrage
+        $profiles = $query->get();
+
+        // Retourner la vue avec les profils
+        return view('profiles.index', compact('profiles'));
+    }
+    
     public function list()
     {
         // Récupérer uniquement les profils de l'utilisateur connecté
@@ -192,6 +216,8 @@ public function generateQrCode($profileId)
         return view('home', compact('profiles'));
     }
 
+
+    
 
     public function destroy($id)
     {
@@ -217,6 +243,38 @@ public function generateQrCode($profileId)
         $profile->delete();
 
         return redirect()->route('profiles.index')->with('success', 'Profil supprimé avec succès.');
+    }
+
+    public function ShowLink(Profile $profile)
+    {
+        return view('profiles.link', compact('profile'));
+    }
+
+    public function downloadVCard(Profile $profile)
+    {
+        // Initialize vCard
+        $vcard = new VCard();
+
+        // Add basic details to the vCard
+        $vcard->addName($profile->name); // Name of the person
+        $vcard->addJobtitle($profile->title ?? ''); // Job title
+        $vcard->addEmail($profile->email ?? ''); // Email address
+        $vcard->addPhoneNumber($profile->phone ?? ''); // Phone number
+        $vcard->addAddress(null, null, $profile->address ?? '', null, null, null, null); // Address
+        $vcard->addURL($profile->profile_link ?? route('profiles.show', $profile->id)); // Profile URL
+        $vcard->addURL($profile->facebook ?? 'https://www.facebook.com/');
+        $vcard->addURL($profile->whatsapp ?? 'https://web.whatsapp.com/');
+        $vcard->addURL($profile->instagram ?? 'https://www.instagram.com/');
+        $vcard->addURL($profile->linkedin ?? 'https://www.linkedin.com/');
+      
+        // Generate dynamic filename based on the user's name
+        $filename = 'contact_' . strtolower(str_replace(' ', '_', $profile->name)) . '.vcf';
+
+         // Generate and return the vCard as a response 
+         return response($vcard->getOutput(), 200, [
+            'Content-Type' => 'text/vcard',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
     }
 
 }

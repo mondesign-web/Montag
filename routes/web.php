@@ -31,6 +31,8 @@ Route::get('/profiles', [ProfileController::class, 'index'])->middleware('auth')
 Route::get('/', [ProfileController::class, 'list'])->middleware('auth')->name('home');
 Route::delete('/profiles/{id}', [ProfileController::class, 'destroy'])->name('profiles.destroy');
 
+Route::get('/profiles/{profile}/vcard', [ProfileController::class, 'downloadVCard'])->name('profiles.vcard');
+
 
 Route::get('/dashboard2', function () {
     return view('dashboard');
@@ -43,6 +45,7 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
+Route::get('/profiles/list', [ProfileController::class, 'ShowLink'])->name('profiles.link');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profiles/createOld', [ProfileController::class, 'create'])->name('profiles.createOld');
@@ -57,16 +60,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/profiles/{profile}/qrcode', [ProfileController::class, 'generateQrCode'])->name('profiles.qrcode');
 
-/*
-Route::get('/profiles/create/step1', [ProfileController::class, 'createStep1'])->name('profiles.create.step1');
-Route::post('/profiles/create/step1', [ProfileController::class, 'storeStep1'])->name('profiles.store.step1');
-
-Route::get('/profiles/create/step2/{profile}', [ProfileController::class, 'createStep2'])->name('profiles.create.step2');
-Route::post('/profiles/create/step2/{profile}', [ProfileController::class, 'storeStep2'])->name('profiles.store.step2');
-
-Route::get('/profiles/create/step3/{profile}', [ProfileController::class, 'createStep3'])->name('profiles.create.step3');
-Route::post('/profiles/create/step3/{profile}', [ProfileController::class, 'storeStep3'])->name('profiles.store.step3');
-*/
 
 
 Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');

@@ -34,7 +34,10 @@
             </div>
         </div>
         <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold hidden" id="submenu">
-            <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Link</h1>
+            <a href="{{ route('profiles.link') }}">
+                <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">Link</h1>
+            </a>
+            
             <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">QR code</h1>
             
         </div>

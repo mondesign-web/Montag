@@ -5,39 +5,26 @@
 @section('content')
     <main class="h-full overflow-y-auto">
         <div class="container px-6 mx-auto grid">
-            <div class="flex justify-between my-3">
-                <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+            <div class="flex flex-col md:flex-row justify-between my-3">
+                <h4 class="my-6 text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 text-center md:text-left">
                     Welcome to Montag, {{ auth()->user()->name }}!
-                </h2>
-
-                <div>
+                </h4>
+            
+                <div class="text-center md:text-right">
                     <a href="/profiles/create">
                         <button type="button"
-                            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" fill="#ffffff"
-                                class="bi bi-plus-lg pr-3" viewBox="0 0 16 16">
+                            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 pr-2" fill="#ffffff" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
                                     d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
                             </svg>
                             Create Card
                         </button>
                     </a>
-                    <a href="#">
-                        <button type="button"
-                            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" fill="#ffffff"
-                                class="bi bi-plus-lg pr-3" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd"
-                                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                            </svg>
-                            Lier la carte à un profil
-                        </button>
-                    </a>
                 </div>
-
-
             </div>
-
+            
+          
             <!-- Cards -->
             <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
                 <!-- Card -->
@@ -119,7 +106,8 @@
 
 
         </div>
-        <div class="flex flex-col m-8">
+        
+        <div class="flex flex-col m-4 sm:m-12">
             <div class=" overflow-x-auto pb-4">
                 <div class="min-w-full inline-block align-middle">
                     @if (session('success'))
@@ -173,7 +161,7 @@
                                         <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                                             {{ $profile->title }}</td>
                                         <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                                            {{ $profile->bio }}
+                                            {{ $profile->address }}
                                         </td>
                                         <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                                             {{ $profile->created_at->format('d/m/Y') }}
