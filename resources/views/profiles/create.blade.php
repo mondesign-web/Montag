@@ -181,8 +181,9 @@
                     <input name="nfc_tag_id" id="nfc_tag_id" type="text"
                         class="block w-full px-4 py-2 border-gray-300 rounded-md">
                 </div>
+                <h3 class="text-lg font-semibold mb-4">Ajouter vos liens et pdfs:</h3>
                 <div class="border-dashed border-2 p-6 my-6 border-gray-300 rounded-md">
-                    <h3 class="text-lg font-semibold mb-4">Ajouter vos liens et pdfs</h3>
+                    
 
                     <!-- Add Links -->
                     <div>

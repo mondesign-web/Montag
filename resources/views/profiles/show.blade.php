@@ -140,7 +140,7 @@
                     @endif
 
 
-                    @forelse($documents->where('type', 'document') as $document)
+                    @forelse($documents->where('type', 'document') as $index => $document)
                         <li class="flex my-2">
                             <div class="flex h-8 w-8 items-center justify-center rounded text-white"
                                 style="background-color: {{ $profile->background_color }}">
@@ -155,7 +155,7 @@
                             <div class="ml-4 mb-4">
                                 <!--a href="{{ asset('storage/' . $document->content) }}" target="_blank" -->
                                 <button class="text-gray-600 dark:text-slate-400" onclick="downloadAsPDF()">
-                                    Télécharger le document
+                                    Télécharger le document {{ $index + 1 }}
                                 </button>
                             </div>
 
@@ -202,7 +202,7 @@
                     <!-- Bouton Add to Contacts -->
                     <a href="{{ route('profiles.vcard', $profile->id) }}" class="w-full sm:w-1/3">
                         <button class="w-full rounded-lg bg-gray-400 hover:shadow-lg font-semibold text-white px-6 py-2">
-                            Add to Contacts
+                        Add to Contacts
                         </button>
                     </a>
 

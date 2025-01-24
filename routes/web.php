@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('home');
 })->middleware(['auth'])->name('home');
 
+Route::get('template/model1', function(){
+    return view('template.model1');
+});
 /*
 Route::get('/dashboard', function () {
     return view('home');
@@ -66,6 +69,8 @@ Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middlewar
 
 //Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->middleware(['auth'])->name('profiles.update');
+Route::delete('/documents/{id}', [ProfileController::class, 'destroyDocument'])->name('documents.destroy');
+
 Route::get('/profiles/{profile}/edit', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profiles.edit');
 
 Route::get('/test2', function(){

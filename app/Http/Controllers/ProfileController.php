@@ -13,7 +13,7 @@ use JeroenDesloovere\VCard\VCard;
 
 class ProfileController extends Controller
 {
-   
+   /*
     public function create()
     {
         // Récupérez le nom de l'utilisateur connecté
@@ -26,6 +26,24 @@ class ProfileController extends Controller
         return view('profiles.create', compact('nameUser'));
        
     }
+        */
+    public function create()
+{
+    // Vérifiez si l'utilisateur connecté a déjà un profil
+    if (Profile::where('user_id', auth()->id())->exists()) {
+        return redirect()->route('profiles.index')->with('error', 'Vous avez déjà un profil.');
+    }
+
+    // Récupérez le nom de l'utilisateur connecté
+    $user = auth()->user();
+
+    // Vérifiez que l'utilisateur est connecté et récupérez la première lettre de son nom
+    $nameUser = $user ? $this->getFirstLetter($user->name) : '';
+
+    // Retournez la vue pour créer un profil
+    return view('profiles.create', compact('nameUser'));
+}
+
 
     public function getFirstLetter($name){
         // Récupérer la première lettre
@@ -38,7 +56,11 @@ class ProfileController extends Controller
     
     public function store(Request $request)
     {
-        $request->validate([
+        // Vérifiez si un profil existe déjà pour l'utilisateur
+    if (Profile::where('user_id', auth()->id())->exists()) {
+        return redirect()->route('profiles.index')->with('error', 'Vous ne pouvez créer qu\'un seul profil.');
+    }
+            $validated = $request->validate([
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'bio' => 'nullable|string',
@@ -69,6 +91,26 @@ class ProfileController extends Controller
             $photoPath = $request->file('photo')->store('profile_photos', 'public');
         }
 
+        $profile = Profile::create(array_merge($validated, [
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'title' => $request->title,
+            'bio' => $request->bio,
+            'photo_url' => $photoPath,
+            'facebook' => $request->facebook,
+            'instagram' => $request->instagram,
+            'whatsapp' => $request->whatsapp,
+            'linkedin' => $request->linkedin,
+            'background_color' => $request->background_color,
+            'nfc_tag_id' => $request->nfc_tag_id,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+           // 'qr_code' => $request->qr_code,
+           // 'profile_link'=> $request->profile_link,
+        ]));
+
+        /*
         $profile = Profile::create([
             'user_id' => auth()->id(), // Associe l'utilisateur connecté
             'name' => $request->name,
@@ -87,7 +129,7 @@ class ProfileController extends Controller
            // 'qr_code' => $request->qr_code,
            // 'profile_link'=> $request->profile_link,
         ]);
-
+*/
              // Save links
             /*if ($request->has('links')) {
                 foreach ($request->links as $link) {
@@ -163,11 +205,10 @@ class ProfileController extends Controller
         return view('profiles.show', compact('profile', 'nameUser', 'documents'));
     }
 
-
     public function update(Request $request, Profile $profile)
-    {
+{
     // Validation des données entrantes
-    $request->validate([
+    $validated = $request->validate([
         'name' => 'required|string|max:255',
         'title' => 'nullable|string|max:255',
         'bio' => 'nullable|string',
@@ -178,7 +219,7 @@ class ProfileController extends Controller
         'linkedin' => 'nullable|url',
         'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
         'email' => 'required|email|max:100',
-        'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/', // Valide un numéro de téléphone (format international)
+        'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/',
         'address' => 'nullable|string|max:255',
         'links' => 'nullable|array',
         'links.*' => 'nullable|url',
@@ -186,36 +227,32 @@ class ProfileController extends Controller
         'documents.*' => 'nullable|mimes:pdf|max:2048',
     ]);
 
-    // Gérer le téléchargement de la nouvelle photo, si nécessaire
+    // Gérer le téléchargement de la nouvelle photo
     if ($request->hasFile('photo')) {
-        // Supprimer l'ancienne photo si elle existe
         if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
             \Storage::disk('public')->delete($profile->photo_url);
         }
-
-        // Sauvegarder la nouvelle photo
         $profile->photo_url = $request->file('photo')->store('profile_photos', 'public');
     }
 
     // Mettre à jour les données du profil
     $profile->update([
-        'name' => $request->name,
-        'title' => $request->title,
-        'bio' => $request->bio,
-        'facebook' => $request->facebook,
-        'instagram' => $request->instagram,
-        'whatsapp' => $request->whatsapp,
-        'linkedin' => $request->linkedin,
-        'nfc_tag_id' => $request->nfc_tag_id,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'address' => $request->address,
-        // 'qr_code' => $request->qr_code, // Ne pas modifier le QR Code
+        'name' => $validated['name'],
+        'title' => $validated['title'],
+        'bio' => $validated['bio'],
+        'facebook' => $validated['facebook'],
+        'instagram' => $validated['instagram'],
+        'whatsapp' => $validated['whatsapp'],
+        'linkedin' => $validated['linkedin'],
+        'nfc_tag_id' => $validated['nfc_tag_id'],
+        'email' => $validated['email'],
+        'phone' => $validated['phone'],
+        'address' => $validated['address'],
     ]);
 
-     // Gérer les liens
-     if ($request->has('links')) {
-        // Supprimer les anciens liens associés au profil
+    // **Gérer les liens**
+    if ($request->has('links')) {
+        // Supprimer tous les anciens liens associés au profil
         ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
 
         // Ajouter les nouveaux liens
@@ -229,19 +266,8 @@ class ProfileController extends Controller
         }
     }
 
-    // Gérer les documents
-    if ($request->has('documents')) {
-        // Supprimer les anciens documents associés au profil
-        $existingDocuments = ProfileDocument::where('profile_id', $profile->id)->where('type', 'document')->get();
-
-        foreach ($existingDocuments as $document) {
-            if (\Storage::disk('public')->exists($document->content)) {
-                \Storage::disk('public')->delete($document->content);
-            }
-            $document->delete();
-        }
-
-        // Ajouter les nouveaux documents
+    // **Gérer les documents**
+    if ($request->hasFile('documents')) {
         foreach ($request->file('documents') as $document) {
             $path = $document->store('documents', 'public');
             ProfileDocument::create([
@@ -256,6 +282,22 @@ class ProfileController extends Controller
     // Rediriger avec un message de succès
     return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
 }
+
+public function destroyDocument($id)
+{
+    $document = ProfileDocument::findOrFail($id);
+
+    // Supprimer le fichier du stockage
+    if (\Storage::disk('public')->exists($document->content)) {
+        \Storage::disk('public')->delete($document->content);
+    }
+
+    // Supprimer l'entrée de la base de données
+    $document->delete();
+
+    return response()->json(['message' => 'Document supprimé avec succès.']);
+}
+
 
     public function edit(Profile $profile)
     {

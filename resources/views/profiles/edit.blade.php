@@ -145,8 +145,8 @@
                 </div>
                 <div class="mb-4">
                     <!--label for="background_color" class="block text-sm font-medium text-gray-700">Background Color</label>
-                                                                                        <input type="color" id="background_color" name="background_color"
-                                                                                            class="block w-16 h-10 border rounded-md"-->
+                                                                                                                <input type="color" id="background_color" name="background_color"
+                                                                                                                    class="block w-16 h-10 border rounded-md"-->
                     <label for="backgroundColorInput" class="block text-sm font-medium text-gray-700">
                         Choisissez une couleur pour le fond du profil :
                     </label>
@@ -173,50 +173,61 @@
                     <div>
                         @if ($documents->where('type', 'link')->isNotEmpty())
                             @foreach ($documents->where('type', 'link') as $link)
+                                <!-- Affiche les liens existants avec un bouton "-" -->
                                 <div class="flex items-center space-x-4 mt-2">
-                                    <input type="url" name="links[]" id="content-link"
-                                        placeholder="https://example.com"
+                                    <input type="url" name="links[]" placeholder="https://example.com"
                                         class="w-full border px-4 py-2 rounded border-gray-300"
-                                        oninput="updatePreview('website_', this.value)" value="{{ $link->content }}" />
-                                    <button type="button" onclick="addLinkInput()"
-                                        class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+                                        value="{{ $link->content }}" />
+                                    <button type="button" class="bg-red-500 text-white px-4 py-2 rounded"
+                                        onclick="removeInput(this)">-</button>
                                 </div>
-                                <div id="additional-links"></div>
                             @endforeach
-                        @else
-                            <p></p>
                         @endif
 
+                        <!-- Affiche un input vide avec un bouton "+" pour ajouter un nouveau lien -->
                         <div class="flex items-center space-x-4 mt-2">
-                            <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
-                                class="w-full border px-4 py-2 rounded border-gray-300"
-                                oninput="updatePreview('website_', this.value)" />
-                            <button type="button" class="bg-red-500 text-white px-4 py-2 rounded"
-                                onclick="removeInput(this)">-</button>
+                            <input type="url" name="links[]" placeholder="https://example.com"
+                                class="w-full border px-4 py-2 rounded border-gray-300" />
+                            <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded"
+                                onclick="addLinkInput()">+</button>
                         </div>
+
+                        <!-- Container pour les liens supplémentaires -->
                         <div id="additional-links"></div>
                     </div>
 
-                    <!-- Add Documents -->
+                    <div class="mt-4">
+                        <label for="file" class="block text-sm font-medium">Ajouter un document (PDF
+                            uniquement):</label>
 
-                    @forelse($documents->where('type', 'document') as $document)
-                        <div class="mt-4">
-                            <label for="file" class="block text-sm font-medium">Ajouter un document (PDF
-                                uniquement):</label>
+                        <!-- Documents existants -->
+                        @forelse($documents->where('type', 'document') as $document)
                             <div class="flex items-center space-x-4 mt-2">
-
-                                <input type="file" name="documents[]" id="file"
-                                    class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" />
-                                <button type="button" onclick="addDocumentInput()"
-                                    class="bg-green-500 text-white px-4 py-2 rounded">+</button>
+                                <span class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-700">
+                                    {{ $document->content }}
+                                </span>
+                                <button type="button" onclick="removeExistingDocument({{ $document->id }}, this)"
+                                    class="bg-red-500 text-white px-[14px] py-3 rounded"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </button>
                             </div>
-                            <span>{{ $document->content }}</span>
-                            <div id="additional-documents"></div>
-                        </div>
-                    @empty
-                        <p></p>
-                    @endforelse
+                        @empty
+                            <p class="text-red-500 text-sm my-3">Aucun document existant.</p>
+                        @endforelse
 
+                        <!-- Ajouter un nouveau document -->
+                        <div class="flex items-center space-x-4 mt-2">
+                            <input type="file" name="documents[]" id="file"
+                                class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" />
+                            <button type="button" onclick="addDocumentInput()"
+                                class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+                        </div>
+                        <div id="additional-documents"></div>
+                    </div>
 
 
                 </div>
@@ -254,10 +265,10 @@
                         @endif
                     </div>
                     <!--div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                                                                        <img class="object-cover object-center h-32" id="profilePhotoTemplate"
-                                                                            src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
-                                                                            alt='Woman looking front'>
-                                                                    </div-->
+                                                                                                <img class="object-cover object-center h-32" id="profilePhotoTemplate"
+                                                                                                    src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
+                                                                                                    alt='Woman looking front'>
+                                                                                            </div-->
                     <div class="text-center mt-2">
                         <h2 class="font-semibold" id="fullName">{{ $profile->name }}</h2>
                         <p class="text-gray-500" id="poste">{{ $profile->title }}</p>
@@ -307,11 +318,60 @@
                             </div>
                         </li>
 
+                        @if ($documents->where('type', 'link')->isNotEmpty())
+                            @foreach ($documents->where('type', 'link') as $link)
+                                <li class="flex my-2">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded text-white bg-blue-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-browser-edge" viewBox="0 0 16 16">
+                                            <path
+                                                d="M9.482 9.341c-.069.062-.17.153-.17.309 0 .162.107.325.3.456.877.613 2.521.54 2.592.538h.002c.667 0 1.32-.18 1.894-.519A3.84 3.84 0 0 0 16 6.819c.018-1.316-.44-2.218-.666-2.664l-.04-.08C13.963 1.487 11.106 0 8 0A8 8 0 0 0 .473 5.29C1.488 4.048 3.183 3.262 5 3.262c2.83 0 5.01 1.885 5.01 4.797h-.004v.002c0 .338-.168.832-.487 1.244l.006-.006z" />
+                                            <path
+                                                d="M.01 7.753a8.14 8.14 0 0 0 .753 3.641 8 8 0 0 0 6.495 4.564 5 5 0 0 1-.785-.377h-.01l-.12-.075a5.5 5.5 0 0 1-1.56-1.463A5.543 5.543 0 0 1 6.81 5.8l.01-.004.025-.012c.208-.098.62-.292 1.167-.285q.194.001.384.033a4 4 0 0 0-.993-.698l-.01-.005C6.348 4.282 5.199 4.263 5 4.263c-2.44 0-4.824 1.634-4.99 3.49m10.263 7.912q.133-.04.265-.084-.153.047-.307.086z" />
+                                            <path
+                                                d="M10.228 15.667a5 5 0 0 0 .303-.086l.082-.025a8.02 8.02 0 0 0 4.162-3.3.25.25 0 0 0-.331-.35q-.322.168-.663.294a6.4 6.4 0 0 1-2.243.4c-2.957 0-5.532-2.031-5.532-4.644q.003-.203.046-.399a4.54 4.54 0 0 0-.46 5.898l.003.005c.315.441.707.821 1.158 1.121h.003l.144.09c.877.55 1.721 1.078 3.328.996" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4 mb-4">
+                                        <a href="{{ $link->content }}" target="_blank">
+                                            <p class="text-gray-600 dark:text-slate-400 "> {{ $link->content }} </p>
+                                        </a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        @else
+                            <p class="text-gray-500"></p>
+                        @endif
+
+
+                        @forelse($documents->where('type', 'document') as $index => $document)
+                            <li class="flex my-2">
+                                <div class="flex h-8 w-8 items-center justify-center rounded text-white bg-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-file-pdf-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.523 10.424q.21-.124.459-.238a8 8 0 0 1-.45.606c-.28.337-.498.516-.635.572l-.035.012a.3.3 0 0 1-.026-.044c-.056-.11-.054-.216.04-.36.106-.165.319-.354.647-.548m2.455-1.647q-.178.037-.356.078a21 21 0 0 0 .5-1.05 12 12 0 0 0 .51.858q-.326.048-.654.114m2.525.939a4 4 0 0 1-.435-.41q.344.007.612.054c.317.057.466.147.518.209a.1.1 0 0 1 .026.064.44.44 0 0 1-.06.2.3.3 0 0 1-.094.124.1.1 0 0 1-.069.015c-.09-.003-.258-.066-.498-.256M8.278 4.97c-.04.244-.108.524-.2.829a5 5 0 0 1-.089-.346c-.076-.353-.087-.63-.046-.822.038-.177.11-.248.196-.283a.5.5 0 0 1 .145-.04c.013.03.028.092.032.198q.008.183-.038.465z" />
+                                        <path fill-rule="evenodd"
+                                            d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m.165 11.668c.09.18.23.343.438.419.207.075.412.04.58-.03.318-.13.635-.436.926-.786.333-.401.683-.927 1.021-1.51a11.6 11.6 0 0 1 1.997-.406c.3.383.61.713.91.95.28.22.603.403.934.417a.86.86 0 0 0 .51-.138c.155-.101.27-.247.354-.416.09-.181.145-.37.138-.563a.84.84 0 0 0-.2-.518c-.226-.27-.596-.4-.96-.465a5.8 5.8 0 0 0-1.335-.05 11 11 0 0 1-.98-1.686c.25-.66.437-1.284.52-1.794.036-.218.055-.426.048-.614a1.24 1.24 0 0 0-.127-.538.7.7 0 0 0-.477-.365c-.202-.043-.41 0-.601.077-.377.15-.576.47-.651.823-.073.34-.04.736.046 1.136.088.406.238.848.43 1.295a20 20 0 0 1-1.062 2.227 7.7 7.7 0 0 0-1.482.645c-.37.22-.699.48-.897.787-.21.326-.275.714-.08 1.103" />
+                                    </svg>
+                                </div>
+                                <div class="ml-4 mb-4">
+                                    <!--a href="{{ asset('storage/' . $document->content) }}" target="_blank" -->
+                                    <button class="text-gray-600 dark:text-slate-400" onclick="downloadAsPDF()">  
+                                            document-{{ $index + 1 }}.pdf
+                                    </button>
+                                </div>
+
+                            </li>
+                        @empty
+                            <p></p>
+                        @endforelse
+
                     </ul>
                     <!-- Social Media Preview Section -->
                     <!--ul id="social-preview" class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
-                                                           Dynamically added icons will appear here
-                                                        </ul-->
+                                                                                   Dynamically added icons will appear here
+                                                                                </ul-->
 
                     <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
                         @if ($profile->facebook)
@@ -417,12 +477,12 @@
     </div>
 
     <script>
-        function addLinkInput() {
-            const addLink = document.getElementById('additional-links');
+        /* function addLinkInput() {
+                            const addLink = document.getElementById('additional-links');
 
-            const inputWrapper = document.createElement('div');
-            inputWrapper.className = 'flex items-center space-x-4 mt-2';
-            inputWrapper.innerHTML = `
+                            const inputWrapper = document.createElement('div');
+                            inputWrapper.className = 'flex items-center space-x-4 mt-2';
+                            inputWrapper.innerHTML = `
                 <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
                                 class="w-full border px-4 py-2 rounded" 
                                  />
@@ -430,8 +490,9 @@
                 class="bg-red-500 text-white px-4 py-2 rounded">-</button>
                             
             `;
-            addLink.appendChild(inputWrapper);
-        }
+                            addLink.appendChild(inputWrapper);
+                        }
+                */
 
         function addDocumentInput() {
             const addDocument = document.getElementById('additional-documents');
@@ -447,9 +508,55 @@
             `;
             addDocument.appendChild(inputDocument)
         }
+        /*
+                function removeInput(button) {
+                    button.parentElement.remove();
+                }
+                    */
+
+        function addLinkInput() {
+            const additionalLinks = document.getElementById('additional-links');
+
+            // Créer un nouveau conteneur d'input
+            const newInput = document.createElement('div');
+            newInput.className = 'flex items-center space-x-4 mt-2';
+
+            // Ajouter un input et un bouton "-" pour le supprimer
+            newInput.innerHTML = `
+        <input type="url" name="links[]" placeholder="https://example.com"
+            class="w-full border px-4 py-2 rounded border-gray-300" />
+        <button type="button" class="bg-red-500 text-white px-4 py-2 rounded" onclick="removeInput(this)">-</button>
+    `;
+
+            // Ajouter le nouvel input dans le conteneur
+            additionalLinks.appendChild(newInput);
+        }
 
         function removeInput(button) {
+            // Supprimer l'input associé au bouton "-"
             button.parentElement.remove();
+        }
+
+
+        function removeExistingDocument(documentId, button) {
+            // Envoyer une requête AJAX pour supprimer le document côté serveur
+            fetch(`/documents/${documentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Supprimer l'élément de l'interface si la suppression est réussie
+                        button.parentElement.remove();
+                    } else {
+                        alert('Une erreur s\'est produite lors de la suppression du document.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression:', error);
+                });
         }
     </script>
 @endsection
