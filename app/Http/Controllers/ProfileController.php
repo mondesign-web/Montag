@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile; // Importation du modèle
+use App\Models\ProfileDocument;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -39,7 +40,7 @@ class ProfileController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'title' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
             'bio' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'facebook' => 'nullable|url',
@@ -50,7 +51,14 @@ class ProfileController extends Controller
             'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id',
             'email' => 'required|email|max:100',
             'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/', // Valide un numéro de téléphone (format international)
-            'address' => 'nullable|string|max:255'
+            'address' => 'nullable|string|max:255',
+            'links' => 'nullable|array',
+            'links.*' => 'nullable|url',
+            'documents' => 'nullable|array',
+            'documents.*' => 'nullable|mimes:pdf|max:2048',
+            'links' => 'nullable|array',
+
+
             //'qr_code' => 'nullable|string',
             //'profile_link' => 'nullable|url',
         ]);
@@ -80,6 +88,54 @@ class ProfileController extends Controller
            // 'profile_link'=> $request->profile_link,
         ]);
 
+             // Save links
+            /*if ($request->has('links')) {
+                foreach ($request->links as $link) {
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id,
+                        'type' => 'link',
+                        'content' => $link,
+                    ]);
+                }
+            } 
+
+            // Save documents
+            if ($request->hasFile('documents')) {
+                foreach ($request->file('documents') as $file) {
+                    $path = $file->store('documents', 'public');
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id,
+                        'type' => 'document',
+                        'content' => $path,
+                    ]);
+                }
+            }*/
+            if (!empty($validated['links'])) {
+                foreach (array_filter($validated['links']) as $link) { // Filter out empty links
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id,
+                        'type' => 'link',
+                        'content' => $link,
+                    ]);
+                }
+            }
+        
+            // Process and save documents
+            if ($request->has('documents')) {
+                foreach ($request->file('documents') as $document) {
+                    $path = $document->store('documents', 'public');
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id,
+                        'type' => 'document',
+                        'content' => $path,
+                    ]);
+                }
+            }
+
             $profileUrl = route('profiles.show', $profile->id);
 
             // Utiliser SVG au lieu de PNG pour éviter Imagick
@@ -101,7 +157,10 @@ class ProfileController extends Controller
     {
         $nameUser = $this->getFirstLetter($profile->name);
 
-        return view('profiles.show', compact('profile', 'nameUser'));
+        // Fetch the documents (links and PDFs) associated with this profile
+        $documents = $profile->documents;
+        
+        return view('profiles.show', compact('profile', 'nameUser', 'documents'));
     }
 
 
@@ -120,7 +179,11 @@ class ProfileController extends Controller
         'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
         'email' => 'required|email|max:100',
         'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/', // Valide un numéro de téléphone (format international)
-        'address' => 'nullable|string|max:255'
+        'address' => 'nullable|string|max:255',
+        'links' => 'nullable|array',
+        'links.*' => 'nullable|url',
+        'documents' => 'nullable|array',
+        'documents.*' => 'nullable|mimes:pdf|max:2048',
     ]);
 
     // Gérer le téléchargement de la nouvelle photo, si nécessaire
@@ -150,13 +213,55 @@ class ProfileController extends Controller
         // 'qr_code' => $request->qr_code, // Ne pas modifier le QR Code
     ]);
 
+     // Gérer les liens
+     if ($request->has('links')) {
+        // Supprimer les anciens liens associés au profil
+        ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
+
+        // Ajouter les nouveaux liens
+        foreach (array_filter($validated['links']) as $link) {
+            ProfileDocument::create([
+                'user_id' => auth()->id(),
+                'profile_id' => $profile->id,
+                'type' => 'link',
+                'content' => $link,
+            ]);
+        }
+    }
+
+    // Gérer les documents
+    if ($request->has('documents')) {
+        // Supprimer les anciens documents associés au profil
+        $existingDocuments = ProfileDocument::where('profile_id', $profile->id)->where('type', 'document')->get();
+
+        foreach ($existingDocuments as $document) {
+            if (\Storage::disk('public')->exists($document->content)) {
+                \Storage::disk('public')->delete($document->content);
+            }
+            $document->delete();
+        }
+
+        // Ajouter les nouveaux documents
+        foreach ($request->file('documents') as $document) {
+            $path = $document->store('documents', 'public');
+            ProfileDocument::create([
+                'user_id' => auth()->id(),
+                'profile_id' => $profile->id,
+                'type' => 'document',
+                'content' => $path,
+            ]);
+        }
+    }
+
     // Rediriger avec un message de succès
     return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
 }
 
     public function edit(Profile $profile)
     {
-        return view('profiles.edit', compact('profile'));
+        $documents = $profile->documents;
+        $nameUser = $this->getFirstLetter($profile->name);
+        return view('profiles.edit', compact('profile', 'documents', 'nameUser'));
     }
 
 /*
@@ -202,6 +307,10 @@ public function generateQrCode($profileId)
 
         // Récupérer les profils après filtrage
         $profiles = $query->get();
+        
+        $profiles->each(function ($profile) {
+            $profile->nameInitial = strtoupper(substr($profile->name, 0, 1)); // Add the initial as a property
+        });
 
         // Retourner la vue avec les profils
         return view('profiles.index', compact('profiles'));
@@ -211,6 +320,10 @@ public function generateQrCode($profileId)
     {
         // Récupérer uniquement les profils de l'utilisateur connecté
         $profiles = Profile::where('user_id', auth()->id())->get();
+
+        $profiles->each(function ($profile) {
+            $profile->nameInitial = strtoupper(substr($profile->name, 0, 1)); // Add the initial as a property
+        });
 
         // Retourner la vue avec les profils
         return view('home', compact('profiles'));

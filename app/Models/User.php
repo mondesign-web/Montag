@@ -30,7 +30,11 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
- 
+    public function documents()
+    {
+        return $this->hasMany(ProfileDocument::class);
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

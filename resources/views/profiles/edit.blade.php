@@ -90,7 +90,7 @@
                                         Choisir un fichier
                                     </label>
                                     <!-- Nom du fichier sélectionné -->
-                                    <span id="file-name" class="ml-3 text-gray-600">Aucun fichier choisi</span>
+                                    <span id="file-name" class="ml-3 text-gray-600">{{ $profile->photo_url }}</span>
                                     <!-- Input caché -->
                                     <input id="photo" name="photo" type="file" class="hidden" accept="image/*"
                                         value="{{ $profile->photo_url }}"
@@ -135,7 +135,8 @@
                     <label class="block text-sm font-medium text-gray-700">Social Media Links</label>
                     <input name="facebook" type="url" value="{{ $profile->facebook }}" placeholder="Facebook URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
-                    <input name="instagram" type="url" value="{{ $profile->instagram }}" placeholder="Instagram URL"
+                    <input name="instagram" type="url" value="{{ $profile->instagram }}"
+                        placeholder="Instagram URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
                     <input name="whatsapp" type="url" value="{{ $profile->whatsapp }}" placeholder="WhatsApp URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
@@ -144,8 +145,8 @@
                 </div>
                 <div class="mb-4">
                     <!--label for="background_color" class="block text-sm font-medium text-gray-700">Background Color</label>
-                                                    <input type="color" id="background_color" name="background_color"
-                                                        class="block w-16 h-10 border rounded-md"-->
+                                                                                        <input type="color" id="background_color" name="background_color"
+                                                                                            class="block w-16 h-10 border rounded-md"-->
                     <label for="backgroundColorInput" class="block text-sm font-medium text-gray-700">
                         Choisissez une couleur pour le fond du profil :
                     </label>
@@ -163,7 +164,61 @@
                 <div class="mb-4">
                     <label for="nfc_tag_id" class="block text-sm font-medium text-gray-700">NFC Tag ID</label>
                     <input name="nfc_tag_id" id="nfc_tag_id" type="text"
-                        class="block w-full px-4 py-2 border rounded-md">
+                        class="block w-full px-4 py-2 border rounded-md" value="{{ $profile->nfc_tag_id }}">
+                </div>
+                <div class="border-dashed border-2 p-6 my-6 border-gray-300 rounded-md">
+                    <h3 class="text-lg font-semibold mb-4">Ajouter vos liens et pdfs</h3>
+
+                    <!-- Add Links -->
+                    <div>
+                        @if ($documents->where('type', 'link')->isNotEmpty())
+                            @foreach ($documents->where('type', 'link') as $link)
+                                <div class="flex items-center space-x-4 mt-2">
+                                    <input type="url" name="links[]" id="content-link"
+                                        placeholder="https://example.com"
+                                        class="w-full border px-4 py-2 rounded border-gray-300"
+                                        oninput="updatePreview('website_', this.value)" value="{{ $link->content }}" />
+                                    <button type="button" onclick="addLinkInput()"
+                                        class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+                                </div>
+                                <div id="additional-links"></div>
+                            @endforeach
+                        @else
+                            <p></p>
+                        @endif
+
+                        <div class="flex items-center space-x-4 mt-2">
+                            <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
+                                class="w-full border px-4 py-2 rounded border-gray-300"
+                                oninput="updatePreview('website_', this.value)" />
+                            <button type="button" class="bg-red-500 text-white px-4 py-2 rounded"
+                                onclick="removeInput(this)">-</button>
+                        </div>
+                        <div id="additional-links"></div>
+                    </div>
+
+                    <!-- Add Documents -->
+
+                    @forelse($documents->where('type', 'document') as $document)
+                        <div class="mt-4">
+                            <label for="file" class="block text-sm font-medium">Ajouter un document (PDF
+                                uniquement):</label>
+                            <div class="flex items-center space-x-4 mt-2">
+
+                                <input type="file" name="documents[]" id="file"
+                                    class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" />
+                                <button type="button" onclick="addDocumentInput()"
+                                    class="bg-green-500 text-white px-4 py-2 rounded">+</button>
+                            </div>
+                            <span>{{ $document->content }}</span>
+                            <div id="additional-documents"></div>
+                        </div>
+                    @empty
+                        <p></p>
+                    @endforelse
+
+
+
                 </div>
                 <button type="button" class="prev-step px-4 py-2 bg-gray-600 text-white rounded">Previous</button>
                 <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
@@ -180,19 +235,29 @@
                     </div>
                     <div class="mb-4">
 
-                        @if ($profile->photo_url)
+                        @if (!empty($profile->photo_url) && \Storage::disk('public')->exists($profile->photo_url))
+                            <!-- Display profile photo -->
                             <div
                                 class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                                <img class="object-cover object-center h-32 w-32" id="profilePhotoTemplate"
+                                <img class="object-cover object-center h-32 w-32"
                                     src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}">
+                            </div>
+                        @else
+                            <!-- Display avatar with the user's initial -->
+                            <div
+                                class="flex items-center justify-center mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
+                                <div
+                                    class="w-32 h-32 rounded-full flex items-center justify-center bg-blue-500 text-white text-4xl font-bold uppercase">
+                                    <span>{{ $nameUser }}</span>
+                                </div>
                             </div>
                         @endif
                     </div>
                     <!--div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                                    <img class="object-cover object-center h-32" id="profilePhotoTemplate"
-                                        src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
-                                        alt='Woman looking front'>
-                                </div-->
+                                                                        <img class="object-cover object-center h-32" id="profilePhotoTemplate"
+                                                                            src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
+                                                                            alt='Woman looking front'>
+                                                                    </div-->
                     <div class="text-center mt-2">
                         <h2 class="font-semibold" id="fullName">{{ $profile->name }}</h2>
                         <p class="text-gray-500" id="poste">{{ $profile->title }}</p>
@@ -245,8 +310,8 @@
                     </ul>
                     <!-- Social Media Preview Section -->
                     <!--ul id="social-preview" class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
-                       Dynamically added icons will appear here 
-                    </ul-->
+                                                           Dynamically added icons will appear here
+                                                        </ul-->
 
                     <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
                         @if ($profile->facebook)
@@ -351,4 +416,40 @@
 
     </div>
 
+    <script>
+        function addLinkInput() {
+            const addLink = document.getElementById('additional-links');
+
+            const inputWrapper = document.createElement('div');
+            inputWrapper.className = 'flex items-center space-x-4 mt-2';
+            inputWrapper.innerHTML = `
+                <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
+                                class="w-full border px-4 py-2 rounded" 
+                                 />
+                                 <button type="button" onclick="removeInput(this)"
+                class="bg-red-500 text-white px-4 py-2 rounded">-</button>
+                            
+            `;
+            addLink.appendChild(inputWrapper);
+        }
+
+        function addDocumentInput() {
+            const addDocument = document.getElementById('additional-documents');
+
+            const inputDocument = document.createElement('div');
+            inputDocument.className = 'flex items-center space-x-4 mt-2';
+            inputDocument.innerHTML = `
+               <input type="file" name="documents[]" id="file"
+                                class="w-full border px-4 py-2 rounded"  />
+                                 <button type="button" onclick="removeInput(this)"
+                class="bg-red-500 text-white px-4 py-2 rounded">-</button>
+                            
+            `;
+            addDocument.appendChild(inputDocument)
+        }
+
+        function removeInput(button) {
+            button.parentElement.remove();
+        }
+    </script>
 @endsection

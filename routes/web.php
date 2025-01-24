@@ -15,7 +15,7 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return view('home');
-})->middleware(['auth'])->name('home');;
+})->middleware(['auth'])->name('home');
 
 /*
 Route::get('/dashboard', function () {
@@ -45,7 +45,7 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-Route::get('/profiles/list', [ProfileController::class, 'ShowLink'])->name('profiles.link');
+Route::get('/profiles/list', [ProfileController::class, 'ShowLink'])->middleware(['auth'])->name('profiles.link');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profiles/createOld', [ProfileController::class, 'create'])->name('profiles.createOld');
@@ -62,11 +62,11 @@ Route::get('/profiles/{profile}/qrcode', [ProfileController::class, 'generateQrC
 
 
 
-Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
+Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middleware(['auth'])->name('profiles.show');
 
 //Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
-Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->name('profiles.update');
-Route::get('/profiles/{profile}/edit', [ProfileController::class, 'edit'])->name('profiles.edit');
+Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->middleware(['auth'])->name('profiles.update');
+Route::get('/profiles/{profile}/edit', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profiles.edit');
 
 Route::get('/test2', function(){
     return view('test2');
