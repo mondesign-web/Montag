@@ -37,6 +37,7 @@ Route::delete('/profiles/{id}', [ProfileController::class, 'destroy'])->name('pr
 Route::get('/profiles/{profile}/vcard', [ProfileController::class, 'downloadVCard'])->name('profiles.vcard');
 
 
+
 Route::get('/dashboard2', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
@@ -66,6 +67,7 @@ Route::get('/profiles/{profile}/qrcode', [ProfileController::class, 'generateQrC
 
 
 Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middleware(['auth'])->name('profiles.show');
+Route::get('/profiles/contactExchanged', [ProfileController::class, 'contactExchanged'])->middleware(['auth'])->name('profiles.contactExchanged');
 
 //Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->middleware(['auth'])->name('profiles.update');

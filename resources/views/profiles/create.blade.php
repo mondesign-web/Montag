@@ -208,8 +208,16 @@
                                 class="bg-green-500 text-white px-4 py-2 rounded">+</button>
                         </div>
                         <div id="additional-documents"></div>
+                    </div> 
+                    <!-- Galerie -->
+                    <div class="mt-4">
+                        <label for="gallery">Ajouter des images à la galerie :</label>
+                        <input type="file" name="gallery[]" id="gallery" multiple accept="image/*">
                     </div>
+                      
                 </div>
+
+              
 
                 <button type="button" class="prev-step px-4 py-2 bg-gray-600 text-white rounded">Previous</button>
                 <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Submit</button>

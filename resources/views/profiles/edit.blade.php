@@ -219,6 +219,24 @@
                             <p class="text-red-500 text-sm my-3">Aucun document existant.</p>
                         @endforelse
 
+                        <!-- Input pour edité gallery --> 
+                        <div class="flex items-center space-x-4 mt-2">
+                            <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
+                                <div class="grid grid-cols-2 gap-2">
+                                    @forelse($documents->where('type', 'gallery') as $gallery)
+                                        <div>
+                                        <img class="object-cover object-center h-40 max-w-full rounded-lg md:h-60"
+                                            src="{{ asset('storage/' . $gallery->content) }}"
+                                            alt="{{ $gallery->content }}" />
+
+                                        </div>
+                                    @empty
+                                        <p class="text-red-500 text-sm my-3">Aucun gallery</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Ajouter un nouveau document -->
                         <div class="flex items-center space-x-4 mt-2">
                             <input type="file" name="documents[]" id="file"

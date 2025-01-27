@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile; // Importation du modèle
 use App\Models\ProfileDocument;
+use App\Models\ProfileInsight; // Importation du modèle
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -106,6 +107,8 @@ class ProfileController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
+            'gallery' => 'nullable|array', // Ajouter la galerie
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Fichiers d'images pour la galerie
            // 'qr_code' => $request->qr_code,
            // 'profile_link'=> $request->profile_link,
         ]));
@@ -178,6 +181,30 @@ class ProfileController extends Controller
                 }
             }
 
+            // Enregistrer les images dans la galerie
+            /*if ($request->has('gallery')) {
+                foreach ($request->file('gallery') as $galleryItem) {
+                    $path = $galleryItem->store('gallery', 'public');
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id,
+                        'type' => 'gallery',
+                        'content' => $path,
+                    ]);
+                }
+            }*/
+            if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $file) {
+                    $path = $file->store('gallery', 'public');
+                    ProfileDocument::create([
+                        'user_id' => auth()->id(),
+                        'profile_id' => $profile->id, // ID du profil lié
+                        'type' => 'gallery',
+                        'content' => $path, // Chemin du fichier
+                    ]);
+                }
+            }
+            
             $profileUrl = route('profiles.show', $profile->id);
 
             // Utiliser SVG au lieu de PNG pour éviter Imagick
@@ -201,7 +228,11 @@ class ProfileController extends Controller
 
         // Fetch the documents (links and PDFs) associated with this profile
         $documents = $profile->documents;
-        
+
+        // Incrémenter les vues
+        $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        $insights->increment('views');
+
         return view('profiles.show', compact('profile', 'nameUser', 'documents'));
     }
 
@@ -225,6 +256,9 @@ class ProfileController extends Controller
         'links.*' => 'nullable|url',
         'documents' => 'nullable|array',
         'documents.*' => 'nullable|mimes:pdf|max:2048',
+        'gallery' => 'nullable|array', // Ajouter la galerie
+        'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Fichiers d'images pour la galerie
+
     ]);
 
     // Gérer le téléchargement de la nouvelle photo
@@ -274,6 +308,18 @@ class ProfileController extends Controller
                 'user_id' => auth()->id(),
                 'profile_id' => $profile->id,
                 'type' => 'document',
+                'content' => $path,
+            ]);
+        }
+    }
+
+    if($request->hasFile('gallery')){
+        foreach($request->files('gallery') as $galleryItem){
+            $path = $galleryItem->store('gallery', 'public');
+            ProfileDocument::create([
+                'user_id' => auth()->id(),
+                'profile_id' => $profile->id,
+                'type' => 'gallery',
                 'content' => $path,
             ]);
         }
@@ -407,6 +453,11 @@ public function generateQrCode($profileId)
 
     public function downloadVCard(Profile $profile)
     {
+        /* $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id']);
+    $insights->increment('contact_downloads');
+    */ 
+        $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        $insights->increment('contact_downloads');
         // Initialize vCard
         $vcard = new VCard();
 
@@ -432,5 +483,12 @@ public function generateQrCode($profileId)
         ]);
     }
 
+    public function contactExchanged(Profile $profile)
+    {
+        $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        $insights->increment('contact_exchanged');
+
+        return back()->with('success', 'Contact exchanged recorded!');
+    }
 }
     
