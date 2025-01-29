@@ -78,10 +78,9 @@ class ProfileController extends Controller
             'links' => 'nullable|array',
             'links.*' => 'nullable|url',
             'documents' => 'nullable|array',
-            'documents.*' => 'nullable|mimes:pdf|max:2048',
+            'documents.*' => 'nullable|mimes:pdf|max:20480',
             'links' => 'nullable|array',
-
-
+     
             //'qr_code' => 'nullable|string',
             //'profile_link' => 'nullable|url',
         ]);
@@ -230,7 +229,7 @@ class ProfileController extends Controller
         $documents = $profile->documents;
 
         // Incrémenter les vues
-        $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        $insights  = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
         $insights->increment('views');
 
         return view('profiles.show', compact('profile', 'nameUser', 'documents'));
@@ -255,7 +254,7 @@ class ProfileController extends Controller
         'links' => 'nullable|array',
         'links.*' => 'nullable|url',
         'documents' => 'nullable|array',
-        'documents.*' => 'nullable|mimes:pdf|max:2048',
+        'documents.*' => 'nullable|mimes:pdf|max:20480',
         'gallery' => 'nullable|array', // Ajouter la galerie
         'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Fichiers d'images pour la galerie
 
@@ -329,20 +328,36 @@ class ProfileController extends Controller
     return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
 }
 
-public function destroyDocument($id)
-{
-    $document = ProfileDocument::findOrFail($id);
+    public function destroyDocument($id)
+    {
+        $document = ProfileDocument::findOrFail($id);
 
-    // Supprimer le fichier du stockage
-    if (\Storage::disk('public')->exists($document->content)) {
-        \Storage::disk('public')->delete($document->content);
+        // Supprimer le fichier du stockage
+        if (\Storage::disk('public')->exists($document->content)) {
+            \Storage::disk('public')->delete($document->content);
+        }
+
+        // Supprimer l'entrée de la base de données
+        $document->delete();
+
+        return response()->json(['message' => 'Document supprimé avec succès.']);
     }
 
-    // Supprimer l'entrée de la base de données
-    $document->delete();
+    public function destroyGellery($id)
+    {
+        $galleryItem = ProfileDocument::findOrFail($id);
+        
+        // Supprimer le fichier du stockage
+        if (\Storage::disk('public')->exists($galleryItem->content)) {
+            \Storage::disk('public')->delete($galleryItem->content);
+        }
 
-    return response()->json(['message' => 'Document supprimé avec succès.']);
-}
+        // Supprimer l'entrée de la base de données
+        $galleryItem->delete();
+
+        return response()->json(['message' => 'gallery supprimé avec succès.']);
+    }
+
 
 
     public function edit(Profile $profile)
@@ -417,7 +432,7 @@ public function generateQrCode($profileId)
         return view('home', compact('profiles'));
     }
 
-
+   
     
 
     public function destroy($id)
@@ -490,5 +505,14 @@ public function generateQrCode($profileId)
 
         return back()->with('success', 'Contact exchanged recorded!');
     }
+
+    public function linkTapped(Profile $profile)
+    {
+        $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        $insights->increment('link_taps');
+
+        return response()->json(['success' => true]);
+    }
+
 }
     

@@ -164,25 +164,26 @@
                         <p></p>
                     @endforelse
                 </ul>
-                 <!-- Input pour edité gallery --> 
-                 <div class="flex items-center space-x-4 mt-2">
-                            <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
-                                <div class="grid grid-cols-2 gap-2">
-                                    @forelse($documents->where('type', 'gallery') as $gallery)
-                                    @if (!empty($gallery->content) && \Storage::disk('public')->exists($gallery->content))
-                                        <div>
+                <!-- Input pour edité gallery -->
+                <div class="flex items-center space-x-4 mt-2">
+                    <div
+                        class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
+                        <div class="grid grid-cols-2 gap-2">
+                            @forelse($documents->where('type', 'gallery') as $gallery)
+                                @if (!empty($gallery->content) && \Storage::disk('public')->exists($gallery->content))
+                                    <div>
                                         <img class="object-cover object-center h-40 max-w-full rounded-lg md:h-60"
                                             src="{{ asset('storage/' . $gallery->content) }}"
                                             alt="{{ $gallery->content }}" />
 
-                                        </div>
-                                    @endif
-                                    @empty
-                                        <p class="text-red-500 text-sm my-3">Aucun gallery</p>
-                                    @endforelse
-                                </div>
-                            </div>
+                                    </div>
+                                @endif
+                            @empty
+                                <p class="text-red-500 text-sm my-3">Aucun gallery</p>
+                            @endforelse
                         </div>
+                    </div>
+                </div>
                 <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-6">
                     @if ($profile->facebook)
                         <li>
@@ -224,11 +225,13 @@
                             Add to Contacts
                         </button>
                     </a>
-                    <a href="{{ route('profiles.contactExchanged') }}">
-                        <button class="w-full rounded-lg bg-red-400 hover:shadow-lg font-semibold text-white px-6 py-2">
+                    <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="w-full rounded-lg bg-red-400 hover:shadow-lg font-semibold text-white px-6 py-2">
                             Contact Exchanged
                         </button>
-                    </a>
+                    </form>
 
                     <!-- Bouton Share My Profile -->
                     <button id="share-button"
@@ -263,9 +266,9 @@
                 </div>
                 <div class="relative w-full mx-auto">
                     <input type="text" value="{{ $profile->profile_link }}" id="profile-link"
-                        class="w-full px-4 py-2 text-black rounded-md" readonly />
+                        class="w-full px-4 py-2 text-black rounded-md " readonly />
                     <button onclick="copyToClipboard()"
-                        class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800"
+                        class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800 track-link"
                         title="Copier">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -274,58 +277,85 @@
                         </svg>
                     </button>
                 </div>
-                <!--button
-                                                            class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
-                                                            onclick="openModal('modelConfirm')">
-                                                            <svg aria-hidden="true" class="w-4 h-4 me-2" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                                                                </path>
-                                                            </svg>
-                                                            Share link
-                                                        </button>
-
-                                                        <div id="modelConfirm"
-                                                            class="fixed hidden z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4 ">
-                                                            <div class="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-md">
-
-                                                                <div class="flex justify-end p-2">
-                                                                    <button onclick="closeModal('modelConfirm')" type="button"
-                                                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                                                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                                                            xmlns="http://www.w3.org/2000/svg">
-                                                                            <path fill-rule="evenodd"
-                                                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                                clip-rule="evenodd"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-
-                                                                <div class="p-6 pt-0 text-center">
-                                                                    <svg class="w-20 h-20 text-red-600 mx-auto" fill="none" stroke="currentColor"
-                                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                    </svg>
-                                                                    <h3 class="text-xl font-normal text-gray-500 mt-5 mb-6">Are you sure you want to delete this
-                                                                        user?</h3>
-                                                                    <a href="#" onclick="closeModal('modelConfirm')"
-                                                                        class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2">
-                                                                        Yes, I'm sure
-                                                                    </a>
-                                                                    <a href="#" onclick="closeModal('modelConfirm')"
-                                                                        class="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
-                                                                        data-modal-toggle="delete-user-modal">
-                                                                        No, cancel
-                                                                    </a>
-                                                                </div>
-
-                                                            </div>
-                                                        </div-->
 
 
-
+                
+                <!-- Cards -->
+                <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
+                    <!-- Card -->
+                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                        <div
+                            class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-link" viewBox="0 0 16 16">
+                                <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
+                                <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"/>
+                              </svg>
+                        </div>
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Total Link Taps
+                            </p>
+                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                {{ $profile->insights->link_taps ?? 0 }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                        <div
+                            class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
+                            <svg fill="#22c55e" width="25px" height="25px" viewBox="-3.5 0 32 32" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <title>view</title>
+                                <path
+                                    d="M12.406 13.844c1.188 0 2.156 0.969 2.156 2.156s-0.969 2.125-2.156 2.125-2.125-0.938-2.125-2.125 0.938-2.156 2.125-2.156zM12.406 8.531c7.063 0 12.156 6.625 12.156 6.625 0.344 0.438 0.344 1.219 0 1.656 0 0-5.094 6.625-12.156 6.625s-12.156-6.625-12.156-6.625c-0.344-0.438-0.344-1.219 0-1.656 0 0 5.094-6.625 12.156-6.625zM12.406 21.344c2.938 0 5.344-2.406 5.344-5.344s-2.406-5.344-5.344-5.344-5.344 2.406-5.344 5.344 2.406 5.344 5.344 5.344z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Card Views
+                            </p>
+                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                {{ $profile->insights->views ?? 0 }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                        <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Contact Exchanged
+                            </p>
+                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                {{ $profile->insights->contact_exchanged ?? 0 }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                        <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 20 20">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                Contact Download
+                            </p>
+                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                {{ $profile->insights->contact_downloads ?? 0 }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div id="copy-notification"
                     class="fixed bottom-36 right-96 bg-blue-500 text-white text-sm px-4 py-2 rounded shadow-lg hidden">
                     Lien copié !
@@ -342,31 +372,9 @@
     <!-- jsPDF Library -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <!--script type="text/javascript">
-                                            window.openModal = function(modalId) {
-                                                document.getElementById(modalId).style.display = 'block'
-                                                document.getElementsByTagName('body')[0].classList.add('overflow-y-hidden')
-                                            }
-
-                                            window.closeModal = function(modalId) {
-                                                document.getElementById(modalId).style.display = 'none'
-                                                document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
-                                            }
-
-                                            // Close all modals when press ESC
-                                            document.onkeydown = function(event) {
-                                                event = event || window.event;
-                                                if (event.keyCode === 27) {
-                                                    document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
-                                                    let modals = document.getElementsByClassName('modal');
-                                                    Array.prototype.slice.call(modals).forEach(i => {
-                                                        i.style.display = 'none'
-                                                    })
-                                                }
-                                            };
-                                        </script-->
 
     <script>
+        //share profile
         document.getElementById('share-button').addEventListener('click', function() {
             const profileUrl = "{{ route('profiles.show', $profile->id) }}"; // Replace with your profile URL
             const profileTitle = "{{ $profile->name }}'s Profile";
@@ -384,6 +392,24 @@
             } else {
                 alert('Sharing is not supported on your browser.');
             }
+        });
+
+        //track link
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".track-link").forEach(link => {
+                link.addEventListener("click", function() {
+                    fetch("{{ route('profiles.linkTap', $profile->id) }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            link: this.href
+                        })
+                    });
+                });
+            });
         });
     </script>
 

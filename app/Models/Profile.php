@@ -44,9 +44,11 @@ class Profile extends Model
         return $this->hasMany(ProfileDocument::class);
     }
 
-    public function insights()
+    public function insights() 
     {
         return $this->hasOne(ProfileInsight::class);
     }
+    
+
     
 }

@@ -145,8 +145,8 @@
                 </div>
                 <div class="mb-4">
                     <!--label for="background_color" class="block text-sm font-medium text-gray-700">Background Color</label>
-                                                                                                                <input type="color" id="background_color" name="background_color"
-                                                                                                                    class="block w-16 h-10 border rounded-md"-->
+                                                                                                                                <input type="color" id="background_color" name="background_color"
+                                                                                                                                    class="block w-16 h-10 border rounded-md"-->
                     <label for="backgroundColorInput" class="block text-sm font-medium text-gray-700">
                         Choisissez une couleur pour le fond du profil :
                     </label>
@@ -219,16 +219,39 @@
                             <p class="text-red-500 text-sm my-3">Aucun document existant.</p>
                         @endforelse
 
-                        <!-- Input pour edité gallery --> 
+
+
+                        <!-- Ajouter un nouveau document -->
                         <div class="flex items-center space-x-4 mt-2">
-                            <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
+                            <!--input type="file" name="documents[]" id="file"
+                                class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" /-->
+                            <input type="file" name="documents[]" id="file"
+                                class="w-full border px-4 py-2 rounded" accept="application/pdf" onchange="validatePDFType(this)" oninput="updatePreview('pdf_', this.value)" />
+                            <button type="button" onclick="addDocumentInput()"
+                                class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+                        </div>
+                        <div id="additional-documents"></div>
+                    </div>
+
+                    <div class="mt-4">
+                        <!-- Input pour edité gallery -->
+                        <div class="flex items-center space-x-4 mt-2">
+                            <div
+                                class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
                                 <div class="grid grid-cols-2 gap-2">
                                     @forelse($documents->where('type', 'gallery') as $gallery)
-                                        <div>
-                                        <img class="object-cover object-center h-40 max-w-full rounded-lg md:h-60"
-                                            src="{{ asset('storage/' . $gallery->content) }}"
-                                            alt="{{ $gallery->content }}" />
-
+                                        <div class="flex justify-start items-start">
+                                            <button type="button" onclick="removeGalleryItem({{ $gallery->id }}, this)"
+                                                class="bg-red-500 text-white px-[14px] py-3 rounded"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                </svg>
+                                            </button>
+                                            <img class="object-cover object-center h-40 max-w-full rounded-lg md:h-60"
+                                                src="{{ asset('storage/' . $gallery->content) }}"
+                                                alt="{{ $gallery->content }}" />
                                         </div>
                                     @empty
                                         <p class="text-red-500 text-sm my-3">Aucun gallery</p>
@@ -236,18 +259,12 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Ajouter un nouveau document -->
-                        <div class="flex items-center space-x-4 mt-2">
-                            <input type="file" name="documents[]" id="file"
-                                class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" />
-                            <button type="button" onclick="addDocumentInput()"
-                                class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+                        <div>
+                            <label for="gallery">Ajouter des images à la galerie :</label>
+                            <input type="file" name="gallery[]" id="gallery" multiple accept="image/*">
                         </div>
-                        <div id="additional-documents"></div>
+
                     </div>
-
-
                 </div>
                 <button type="button" class="prev-step px-4 py-2 bg-gray-600 text-white rounded">Previous</button>
                 <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
@@ -283,10 +300,10 @@
                         @endif
                     </div>
                     <!--div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                                                                                                <img class="object-cover object-center h-32" id="profilePhotoTemplate"
-                                                                                                    src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
-                                                                                                    alt='Woman looking front'>
-                                                                                            </div-->
+                                                                                                                <img class="object-cover object-center h-32" id="profilePhotoTemplate"
+                                                                                                                    src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
+                                                                                                                    alt='Woman looking front'>
+                                                                                                            </div-->
                     <div class="text-center mt-2">
                         <h2 class="font-semibold" id="fullName">{{ $profile->name }}</h2>
                         <p class="text-gray-500" id="poste">{{ $profile->title }}</p>
@@ -375,8 +392,8 @@
                                 </div>
                                 <div class="ml-4 mb-4">
                                     <!--a href="{{ asset('storage/' . $document->content) }}" target="_blank" -->
-                                    <button class="text-gray-600 dark:text-slate-400" onclick="downloadAsPDF()">  
-                                            document-{{ $index + 1 }}.pdf
+                                    <button class="text-gray-600 dark:text-slate-400" onclick="downloadAsPDF()">
+                                        document-{{ $index + 1 }}.pdf
                                     </button>
                                 </div>
 
@@ -388,8 +405,8 @@
                     </ul>
                     <!-- Social Media Preview Section -->
                     <!--ul id="social-preview" class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
-                                                                                   Dynamically added icons will appear here
-                                                                                </ul-->
+                                                                                                   Dynamically added icons will appear here
+                                                                                                </ul-->
 
                     <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
                         @if ($profile->facebook)
@@ -496,11 +513,11 @@
 
     <script>
         /* function addLinkInput() {
-                            const addLink = document.getElementById('additional-links');
+                                            const addLink = document.getElementById('additional-links');
 
-                            const inputWrapper = document.createElement('div');
-                            inputWrapper.className = 'flex items-center space-x-4 mt-2';
-                            inputWrapper.innerHTML = `
+                                            const inputWrapper = document.createElement('div');
+                                            inputWrapper.className = 'flex items-center space-x-4 mt-2';
+                                            inputWrapper.innerHTML = `
                 <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
                                 class="w-full border px-4 py-2 rounded" 
                                  />
@@ -508,9 +525,9 @@
                 class="bg-red-500 text-white px-4 py-2 rounded">-</button>
                             
             `;
-                            addLink.appendChild(inputWrapper);
-                        }
-                */
+                                            addLink.appendChild(inputWrapper);
+                                        }
+                                */
 
         function addDocumentInput() {
             const addDocument = document.getElementById('additional-documents');
@@ -574,6 +591,27 @@
                 })
                 .catch(error => {
                     console.error('Erreur lors de la suppression:', error);
+                });
+        }
+
+        function removeGalleryItem(galleryId, button) {
+
+            fetch(`/gallery/${galleryId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        //supprime l'element de gallerie
+                        button.parentElement.remove();
+                    } else {
+                        alert('Une erreur s\'est produite lors de la suppression du image.')
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression: ', error);
                 });
         }
     </script>

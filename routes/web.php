@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,13 +14,12 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-})->middleware(['auth'])->name('home');
+//Route::get('/', function () { return view('home'); })->middleware(['auth'])->name('home');
 
-Route::get('template/model1', function(){
-    return view('template.model1');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+//Route::get('/1',  [HomeController, 'index'])->middleware('auth')->name('home.index');
+
+
 /*
 Route::get('/dashboard', function () {
     return view('home');
@@ -67,15 +67,21 @@ Route::get('/profiles/{profile}/qrcode', [ProfileController::class, 'generateQrC
 
 
 Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middleware(['auth'])->name('profiles.show');
-Route::get('/profiles/contactExchanged', [ProfileController::class, 'contactExchanged'])->middleware(['auth'])->name('profiles.contactExchanged');
+Route::post('/profiles/{profile}/contact-exchanged', [ProfileController::class, 'contactExchanged'])
+    ->name('profiles.contactExchanged');
+Route::post('/profiles/{profile}/link-tap', [ProfileController::class, 'linkTapped'])
+    ->name('profiles.linkTap');
 
 //Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->middleware(['auth'])->name('profiles.update');
 Route::delete('/documents/{id}', [ProfileController::class, 'destroyDocument'])->name('documents.destroy');
+Route::delete('/gallery/{id}', [ProfileController::class, 'destroyGellery'])->name('gallery.destroy');
 
 Route::get('/profiles/{profile}/edit', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profiles.edit');
 
+/*
 Route::get('/test2', function(){
     return view('test2');
 });
+*/
 require __DIR__.'/auth.php';
