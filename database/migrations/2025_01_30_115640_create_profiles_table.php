@@ -20,10 +20,6 @@ class CreateProfilesTable extends Migration
             $table->string('title')->nullable();
             $table->text('bio')->nullable();
             $table->string('photo_url')->nullable();
-            $table->string('facebook')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('whatsapp')->nullable();
-            $table->string('linkedin')->nullable();
             $table->string('nfc_tag_id')->unique();
             $table->string('background_color')->nullable();
             $table->string('qr_code')->nullable();

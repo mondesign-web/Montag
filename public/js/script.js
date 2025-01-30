@@ -105,7 +105,7 @@ const tabButtons = document.querySelectorAll('.tab-btn');
             }
         }
 
-        function showSocialInput(platform) {
+        /*function showSocialInput(platform) {
             const socialInputs = document.getElementById('socialInputs');
 
             // Vérifiez si un champ pour cette plateforme existe déjà
@@ -116,7 +116,7 @@ const tabButtons = document.querySelectorAll('.tab-btn');
             inputWrapper.className = 'flex items-center gap-2';
 
             inputWrapper.innerHTML = `
-        <img src="https://img.icons8.com/${getIconPath(platform)}" alt="${platform}" class="w-8 h-8 mt-3">
+        <img src="{{asset('img/social_links/${getIconPath(platform)}') }}" alt="${platform}" class="w-8 h-8 mt-3">
         <input type="url" name="${platform}" placeholder="Enter ${platform} URL"
             class="block w-full mt-3 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
             oninput="updateSocialLink('${platform}', this.value)">
@@ -134,27 +134,55 @@ const tabButtons = document.querySelectorAll('.tab-btn');
             }
         }
         */
-        // Update the preview section dynamically
-    function updateSocialLink(platform, url) {
-        const previewSection = document.getElementById(`preview-${platform}`);
 
-        if (!previewSection) {
-            // Create the icon in the preview if it doesn't exist
-            const previewContainer = document.getElementById('social-preview');
-            const iconWrapper = document.createElement('li');
-            iconWrapper.id = `preview-${platform}`;
-            iconWrapper.className = 'flex flex-col items-center justify-around';
-            iconWrapper.innerHTML = `
-                <a href="${url}" target="_blank">
-                    <img src="https://img.icons8.com/${getIconPath(platform)}" alt="${platform}" class="w-10 h-10">
-                </a>
+        function showSocialInput(platform) {
+            const socialInputs = document.getElementById('socialInputs');
+        
+            // Vérifiez si un champ pour cette plateforme existe déjà
+            if (document.getElementById(`input-${platform}`)) return;
+        
+            const inputWrapper = document.createElement('div');
+            inputWrapper.id = `input-${platform}`;
+            inputWrapper.className = 'flex items-center gap-2 mb-4';
+        
+            // Ajoutez le chemin de l'icône
+            const iconPath = getIconPath(platform);
+        
+            inputWrapper.innerHTML = `
+                <img src="${iconPath}" alt="${platform}" class="w-8 h-8 mt-3">
+                <input type="url" name="${platform}" placeholder="Enter ${platform} URL"
+                    class="block w-full mt-3 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
+                    oninput="updateSocialLink('${platform}', this.value)">
+                <button onclick="removeSocialInput('${platform}')" class="text-red-500 mt-3">Remove</button>
             `;
-            previewContainer.appendChild(iconWrapper);
-        } else {
-            // Update the URL of the existing icon
-            const link = previewSection.querySelector('a');
-            link.href = url;
+        
+            socialInputs.appendChild(inputWrapper);
         }
+        
+        // Update the preview section dynamically
+        function updateSocialLink(platform, url) {
+            const previewSection = document.getElementById(`preview-${platform}`);
+
+            if (!previewSection) {
+                // Create the icon in the preview if it doesn't exist
+                const previewContainer = document.getElementById('social-preview');
+                const iconWrapper = document.createElement('li');
+                iconWrapper.id = `preview-${platform}`;
+                iconWrapper.className = 'flex flex-col items-center justify-around';
+
+                const iconPath = getIconPath(platform);
+
+                iconWrapper.innerHTML = `
+                    <a href="${url}" target="_blank">
+                        <img src="${iconPath}" alt="${platform}" class="w-10 h-10">
+                    </a>
+                `;
+                previewContainer.appendChild(iconWrapper);
+            } else {
+                // Update the URL of the existing icon
+                const link = previewSection.querySelector('a');
+                link.href = url;
+            }
 }
 
 
@@ -171,15 +199,8 @@ const tabButtons = document.querySelectorAll('.tab-btn');
 
         }
 
-        function getIconPath(platform) {
-            const paths = {
-                facebook: 'fluency/48/facebook-new.png',
-                whatsapp: 'color/48/whatsapp--v1.png',
-                instagram: 'fluency/48/instagram-new.png',
-                linkedin: 'fluency/48/linkedin.png'
-            };
-            return paths[platform];
-        }
+        
+        
 
 
         document.addEventListener('DOMContentLoaded', () => {

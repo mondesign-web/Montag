@@ -137,23 +137,62 @@
                         <!-- Icônes réseaux sociaux -->
                         <div class="flex gap-3">
                             <button type="button" onclick="showSocialInput('facebook')">
-                                <img src="https://img.icons8.com/fluency/48/facebook-new.png" alt="Facebook"
+                                <img src="{{ asset('img/social_links/facebook.png') }}" alt="Facebook"
                                     class="w-10 h-10">
                             </button>
                             <button type="button" onclick="showSocialInput('whatsapp')">
-                                <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="whatsapp"
-                                    class="w-12 h-12">
+                                <img src="{{ asset('img/social_links/whatsapp.png') }}" alt="whatsapp"
+                                    class="w-11 h-11">
                             </button>
                             <button type="button" onclick="showSocialInput('instagram')">
-                                <img src="https://img.icons8.com/fluency/48/instagram-new.png" alt="Instagram"
+                                <img src="{{ asset('img/social_links/instagram.png') }}" alt="Instagram"
                                     class="w-10 h-10">
                             </button>
                             <button type="button" onclick="showSocialInput('linkedin')">
-                                <img src="https://img.icons8.com/fluency/48/linkedin.png" alt="LinkedIn"
+                                <img src="{{ asset('img/social_links/linkedin.png') }}" alt="LinkedIn"
                                     class="w-10 h-10">
                             </button>
+                            <button type="button" onclick="showSocialInput('snapchat')">
+                                <img src="{{ asset('img/social_links/snapchat.png') }}" alt="snapchat"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('telegram')">
+                                <img src="{{ asset('img/social_links/telegram.png') }}" alt="telegram"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('tiktok')">
+                                <img src="{{ asset('img/social_links/tiktok.png') }}" alt="tiktok"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('pinterest')">
+                                <img src="{{ asset('img/social_links/pinterest.png') }}" alt="pinterest"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('behance')">
+                                <img src="{{ asset('img/social_links/behance.png') }}" alt="behance"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('dribbble')">
+                                <img src="{{ asset('img/social_links/dribbble.png') }}" alt="dribbble"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('youtube')">
+                                <img src="{{ asset('img/social_links/youtube.png') }}" alt="youtube"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('twiter')">
+                                <img src="{{ asset('img/social_links/twiter.png') }}" alt="twiter"
+                                    class="w-10 h-10">
+                            </button>
+                            <button type="button" onclick="showSocialInput('discord')">
+                                <img src="{{ asset('img/social_links/discord.png') }}" alt="discord"
+                                    class="w-10 h-10">
+                            </button>
+
                         </div>
                     </div>
+                  
+
 
                     <!-- Champs dynamiques -->
                     <div id="socialInputs" class="mt-4 space-y-2"></div>
@@ -476,6 +515,26 @@
             }
         }
     }
+
+    function getIconPath(platform) {
+            const paths = {
+                facebook: '{{ asset('img/social_links/facebook.png') }}',
+                whatsapp: '{{ asset('img/social_links/whatsapp.png') }}',
+                instagram: '{{ asset('img/social_links/instagram.png') }}',
+                linkedin: '{{ asset('img/social_links/linkedin.png') }}',
+                dribbble: '{{ asset('img/social_links/dribbble.png') }}',
+                behance: '{{ asset('img/social_links/behance.png') }}',
+                pinterest: '{{ asset('img/social_links/pinterest.png') }}',
+                snapchat: '{{ asset('img/social_links/snapchat.png') }}',
+                tiktok: '{{ asset('img/social_links/tiktok.png') }}',
+                telegram: '{{ asset('img/social_links/telegram.png') }}',
+                youtube: '{{ asset('img/social_links/youtube.png') }}',
+                twiter: '{{ asset('img/social_links/twiter.png') }}',
+                discord: '{{ asset('img/social_links/discord.png') }}',
+            };
+        
+            return paths[platform] || '';
+        }
     </script>
 
 

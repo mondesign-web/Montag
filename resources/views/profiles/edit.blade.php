@@ -133,20 +133,64 @@
                 <!-- Champs pour les réseaux sociaux -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Social Media Links</label>
-                    <input name="facebook" type="url" value="{{ $profile->facebook }}" placeholder="Facebook URL"
+
+                    <input name="facebook" type="url" value="{{ $socialLinks->facebook ?? '' }}"
+                        placeholder="Facebook URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
-                    <input name="instagram" type="url" value="{{ $profile->instagram }}"
+
+                    <input name="instagram" type="url" value="{{ $socialLinks->instagram ?? '' }}"
                         placeholder="Instagram URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
-                    <input name="whatsapp" type="url" value="{{ $profile->whatsapp }}" placeholder="WhatsApp URL"
+
+                    <input name="whatsapp" type="url" value="{{ $socialLinks->whatsapp ?? '' }}"
+                        placeholder="WhatsApp URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
-                    <input name="linkedin" type="url" value="{{ $profile->linkedin }}" placeholder="LinkedIn URL"
+
+                    <input name="linkedin" type="url" value="{{ $socialLinks->linkedin ?? '' }}"
+                        placeholder="LinkedIn URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="snapchat" type="url" value="{{ $socialLinks->snapchat ?? '' }}"
+                        placeholder="Snapchat URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="twitter" type="url" value="{{ $socialLinks->twitter ?? '' }}"
+                        placeholder="Twitter URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="telegram" type="url" value="{{ $socialLinks->telegram ?? '' }}"
+                        placeholder="Telegram URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="tiktok" type="url" value="{{ $socialLinks->tiktok ?? '' }}"
+                        placeholder="TikTok URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="pinterest" type="url" value="{{ $socialLinks->pinterest ?? '' }}"
+                        placeholder="Pinterest URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="behance" type="url" value="{{ $socialLinks->behance ?? '' }}"
+                        placeholder="Behance URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="youtube" type="url" value="{{ $socialLinks->youtube ?? '' }}"
+                        placeholder="YouTube URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="discord" type="url" value="{{ $socialLinks->discord ?? '' }}"
+                        placeholder="Discord URL"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
+
+                    <input name="dribbble" type="url" value="{{ $socialLinks->dribbble ?? '' }}"
+                        placeholder="Dribbble URL"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring">
                 </div>
+
                 <div class="mb-4">
                     <!--label for="background_color" class="block text-sm font-medium text-gray-700">Background Color</label>
-                                                                                                                                <input type="color" id="background_color" name="background_color"
-                                                                                                                                    class="block w-16 h-10 border rounded-md"-->
+                                                                                                                                    <input type="color" id="background_color" name="background_color"
+                                                                                                                                        class="block w-16 h-10 border rounded-md"-->
                     <label for="backgroundColorInput" class="block text-sm font-medium text-gray-700">
                         Choisissez une couleur pour le fond du profil :
                     </label>
@@ -224,9 +268,10 @@
                         <!-- Ajouter un nouveau document -->
                         <div class="flex items-center space-x-4 mt-2">
                             <!--input type="file" name="documents[]" id="file"
-                                class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" /-->
+                                    class="w-full border px-4 py-2 rounded" oninput="updatePreview('pdf_', this.value)" /-->
                             <input type="file" name="documents[]" id="file"
-                                class="w-full border px-4 py-2 rounded" accept="application/pdf" onchange="validatePDFType(this)" oninput="updatePreview('pdf_', this.value)" />
+                                class="w-full border px-4 py-2 rounded" accept="application/pdf"
+                                onchange="validatePDFType(this)" oninput="updatePreview('pdf_', this.value)" />
                             <button type="button" onclick="addDocumentInput()"
                                 class="bg-blue-500 text-white px-4 py-2 rounded">+</button>
                         </div>
@@ -300,10 +345,10 @@
                         @endif
                     </div>
                     <!--div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                                                                                                                <img class="object-cover object-center h-32" id="profilePhotoTemplate"
-                                                                                                                    src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
-                                                                                                                    alt='Woman looking front'>
-                                                                                                            </div-->
+                                                                                                                    <img class="object-cover object-center h-32" id="profilePhotoTemplate"
+                                                                                                                        src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
+                                                                                                                        alt='Woman looking front'>
+                                                                                                                </div-->
                     <div class="text-center mt-2">
                         <h2 class="font-semibold" id="fullName">{{ $profile->name }}</h2>
                         <p class="text-gray-500" id="poste">{{ $profile->title }}</p>
@@ -405,8 +450,8 @@
                     </ul>
                     <!-- Social Media Preview Section -->
                     <!--ul id="social-preview" class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
-                                                                                                   Dynamically added icons will appear here
-                                                                                                </ul-->
+                                                                                                       Dynamically added icons will appear here
+                                                                                                    </ul-->
 
                     <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-5">
                         @if ($profile->facebook)
@@ -513,11 +558,11 @@
 
     <script>
         /* function addLinkInput() {
-                                            const addLink = document.getElementById('additional-links');
+                                                const addLink = document.getElementById('additional-links');
 
-                                            const inputWrapper = document.createElement('div');
-                                            inputWrapper.className = 'flex items-center space-x-4 mt-2';
-                                            inputWrapper.innerHTML = `
+                                                const inputWrapper = document.createElement('div');
+                                                inputWrapper.className = 'flex items-center space-x-4 mt-2';
+                                                inputWrapper.innerHTML = `
                 <input type="url" name="links[]" id="content-link" placeholder="https://example.com"
                                 class="w-full border px-4 py-2 rounded" 
                                  />
@@ -525,9 +570,9 @@
                 class="bg-red-500 text-white px-4 py-2 rounded">-</button>
                             
             `;
-                                            addLink.appendChild(inputWrapper);
-                                        }
-                                */
+                                                addLink.appendChild(inputWrapper);
+                                            }
+                                    */
 
         function addDocumentInput() {
             const addDocument = document.getElementById('additional-documents');

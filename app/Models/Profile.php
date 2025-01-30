@@ -16,10 +16,10 @@ class Profile extends Model
         'bio',
         'photo_url',
         'social_links',
-        'facebook',
+        /*'facebook',
         'instagram',
         'whatsapp',
-        'linkedin',
+        'linkedin',*/
         'nfc_tag_id',
         'background_color',
         'qr_code',
@@ -54,6 +54,10 @@ class Profile extends Model
         return $this->hasMany(Contact::class);
     }
    
+    public function socialLinks()
+    {
+        return $this->hasOne(SocialLink::class, 'profile_id');
+    }
     
 
 
