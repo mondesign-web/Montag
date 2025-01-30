@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfileInsightsTable extends Migration
+class CreateContactsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,15 @@ class CreateProfileInsightsTable extends Migration
      */
     public function up()
     {
-        Schema::create('profile_insights', function (Blueprint $table) {
+        Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('profile_id');
-            $table->integer('views')->default(0);
-            $table->integer('contact_exchanged')->default(0);
-            $table->integer('contact_downloads')->default(0);
-            $table->integer('link_taps')->default(0);
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email');
+            $table->string('phone')->nullable();
             $table->timestamps();
-            // Foreign keys
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+    
             $table->foreign('profile_id')->references('id')->on('profiles')->onDelete('cascade');
         });
     }
@@ -34,6 +33,6 @@ class CreateProfileInsightsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profile_insights');
+        Schema::dropIfExists('contacts');
     }
 }

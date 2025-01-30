@@ -10,6 +10,7 @@ class ProfileInsight extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'profile_id',
         'views',
         'contact_exchanged',
@@ -22,5 +23,9 @@ class ProfileInsight extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
 }

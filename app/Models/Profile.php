@@ -46,9 +46,16 @@ class Profile extends Model
 
     public function insights() 
     {
-        return $this->hasOne(ProfileInsight::class);
+        return $this->hasOne(ProfileInsight::class, 'profile_id');
     }
     
+    public function contact()
+    {
+        return $this->hasMany(Contact::class);
+    }
+   
+    
+
 
     
 }

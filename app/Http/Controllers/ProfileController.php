@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile; // Importation du modèle
 use App\Models\ProfileDocument;
 use App\Models\ProfileInsight; // Importation du modèle
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -432,7 +433,13 @@ public function generateQrCode($profileId)
         return view('home', compact('profiles'));
     }
 
-   
+   public function ContactList(Profile $profile)
+   {
+        // Récupérer les contacts liés au profil
+        $contacts = Contact::where('profile_id', $profile->id)->get();
+
+        return view('contact', compact('profile', 'contacts'));
+   }
     
 
     public function destroy($id)
@@ -498,10 +505,28 @@ public function generateQrCode($profileId)
         ]);
     }
 
-    public function contactExchanged(Profile $profile)
+    public function contactExchanged(Request $request, Profile $profile)
     {
+        // Valider les données du formulaire
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:15',
+        ]);
+
         $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
         $insights->increment('contact_exchanged');
+
+         // Sauvegarder les informations du contact dans une table "contacts" (optionnel)
+        Contact::create([
+            'profile_id' => $profile->id,
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+        ]);
+
 
         return back()->with('success', 'Contact exchanged recorded!');
     }
@@ -514,5 +539,18 @@ public function generateQrCode($profileId)
         return response()->json(['success' => true]);
     }
 
+
+    public function getInsights()
+{
+    $user = auth()->user();
+
+    // Vérifier si l'utilisateur a un profil
+    //$profile = Profile::where('user_id', $user->id)->with('insights')->first();
+
+    // Incrémenter les vues
+    $insights  = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+
+    return view('home', compact('profile', 'insights'));
+}
 }
     

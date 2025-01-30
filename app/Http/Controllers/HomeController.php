@@ -25,6 +25,8 @@ class HomeController extends Controller
     }
         */
 
+
+    /*
     public function index()
     {
         $user = auth()->user();
@@ -34,7 +36,23 @@ class HomeController extends Controller
 
         return view('home', compact('profile'));
     }
+    */
 
+    /*
+    public function index()
+    {
+        $user = auth()->user();
+    
+        // Vérifier si le profil existe
+        $profile = Profile::where('user_id', $user->id)->with('insights')->first();
+    
+        // Vérifier si des insights existent
+        $insights = $profile ? $profile->insights : null;
+    
+        return view('home', compact('profile', 'insights'));
+    }
+        
+*/
         
 }
 

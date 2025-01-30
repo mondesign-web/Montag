@@ -16,7 +16,8 @@ use App\Http\Controllers\HomeController;
 
 //Route::get('/', function () { return view('home'); })->middleware(['auth'])->name('home');
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
+Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact');
 //Route::get('/1',  [HomeController, 'index'])->middleware('auth')->name('home.index');
 
 

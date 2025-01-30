@@ -179,7 +179,7 @@
                                     </div>
                                 @endif
                             @empty
-                                <p class="text-red-500 text-sm my-3">Aucun gallery</p>
+                                <p class=""></p>
                             @endforelse
                         </div>
                     </div>
@@ -225,13 +225,105 @@
                             Add to Contacts
                         </button>
                     </a>
-                    <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="w-full rounded-lg bg-red-400 hover:shadow-lg font-semibold text-white px-6 py-2">
-                            Contact Exchanged
-                        </button>
-                    </form>
+                    <!--form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST"-->
+
+                    <button onclick="openModal('modelConfirm')"
+                        class="w-full rounded-lg bg-red-400 hover:shadow-lg font-semibold text-white px-6 py-2">
+                        Contact Exchanged
+                    </button>
+                    <!--/form-->
+
+                    <!--div class="modal">
+                                            <div class="modal-content">
+                                                <img src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}"
+                                                    class="avatar">
+                                                <h2>Partager vos informations avec {{ $profile->name }}</h2>
+
+                                                <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
+                                                    @csrf
+                                                    <input type="text" name="first_name" placeholder="Prénom" required
+                                                        class="input-field">
+                                                    <input type="text" name="last_name" placeholder="Nom" required class="input-field">
+                                                    <input type="email" name="email" placeholder="Email" required class="input-field">
+                                                    <input type="text" name="phone" placeholder="+212" class="input-field">
+                                                    <button type="submit" class="btn">Partager</button>
+                                                </form>
+
+                                                <p class="hint">
+                                                    Pressé(e)? Partagez une photo de votre carte de visite en quelques secondes.
+                                                </p>
+                                            </div>
+                                        </div-->
+
+
+
+                    <div id="modelConfirm"
+                        class="fixed hidden z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4 ">
+                        <div class="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-md">
+
+                            <div class="flex justify-end p-2">
+                                <button onclick="closeModal('modelConfirm')" type="button"
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="p-6 pt-0">
+                                <h2 class="text-center pb-5">Partager vos informations avec {{ $profile->name }}</h2>
+
+                                <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST"
+                                    class="max-w-sm mx-auto">
+                                    @csrf
+                                    <div class="mb-5">
+                                        <label for="first_name"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Prénom
+                                        </label>
+                                        <input
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            type="text" name="first_name" placeholder="Prénom" required>
+                                    </div>
+                                    <div class="mb-5">
+                                        <label for="last_name"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Nom
+                                        </label>
+                                        <input type="text" name="last_name" placeholder="Nom" required
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    </div>
+
+                                    <div class="mb-5">
+                                        <label for="email"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Email
+                                        </label>
+                                        <input type="email" name="email" placeholder="Email" required
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    </div>
+
+                                    <div class="mb-5">
+                                        <label for="phone"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Phone
+                                        </label>
+                                        <input type="text" name="phone" placeholder="+212"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    </div>
+
+                                    <button type="submit"
+                                        class="w-full rounded-lg bg-red-400 hover:shadow-lg font-semibold text-white px-6 py-2">Partager</button>
+                                </form>
+
+
+                            </div>
+
+                        </div>
+                    </div>
 
                     <!-- Bouton Share My Profile -->
                     <button id="share-button"
@@ -279,17 +371,20 @@
                 </div>
 
 
-                
+
                 <!-- Cards -->
                 <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
                     <!-- Card -->
                     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                         <div
                             class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-link" viewBox="0 0 16 16">
-                                <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
-                                <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"/>
-                              </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-link" viewBox="0 0 16 16">
+                                <path
+                                    d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z" />
+                                <path
+                                    d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z" />
+                            </svg>
                         </div>
                         <div>
                             <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -342,8 +437,10 @@
                     <!-- Card -->
                     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                         <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 20 20">
-                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-person-vcard-fill" viewBox="0 0 20 20">
+                                <path
+                                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0" />
                             </svg>
                         </div>
                         <div>
@@ -411,6 +508,28 @@
                 });
             });
         });
+
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'block'
+            document.getElementsByTagName('body')[0].classList.add('overflow-y-hidden')
+        }
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'none'
+            document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
+        }
+
+        // Close all modals when press ESC
+        document.onkeydown = function(event) {
+            event = event || window.event;
+            if (event.keyCode === 27) {
+                document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
+                let modals = document.getElementsByClassName('modal');
+                Array.prototype.slice.call(modals).forEach(i => {
+                    i.style.display = 'none'
+                })
+            }
+        };
     </script>
 
 @endsection

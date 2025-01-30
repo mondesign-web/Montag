@@ -26,6 +26,11 @@
             <i class="bi bi-credit-card-2-front-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">My Card</span>
         </a>
+        <a href="{{ route('contact', $profile->id) }}"
+            class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            <i class="bi bi-person-vcard-fill"></i>
+            <span class="text-[15px] ml-4 text-gray-200 font-bold">Contact Manager</span>
+        </a>
         <a href="#"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-graph-up-arrow"></i>
