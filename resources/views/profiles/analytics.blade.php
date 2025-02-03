@@ -97,7 +97,7 @@
                         label: "Link Taps",
                         data: linkTaps,
                         borderColor: '#ff7b00',
-                        backgroundColor: '#ffeaae',
+                        backgroundColor: '#ffd991',
                         fill: true
                     }]
                 }

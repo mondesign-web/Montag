@@ -78,7 +78,7 @@ class HomeController extends Controller
         return view('analytic', compact('days', 'viewsData', 'contactsData'));
     }
 
-    
+   
     public function analytics()
     {
         $user = auth()->user();
@@ -121,6 +121,12 @@ class HomeController extends Controller
 
         return view('profiles.analytics', compact('profile', 'insights'));
     }
+        
+
+       
+
+    
+        
 
         
 }
