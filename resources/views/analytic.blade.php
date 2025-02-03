@@ -1,6 +1,6 @@
 @extends('/layout')
 
-@section('title', 'Edit Profile')
+@section('title', 'Analytic')
 
 @section('content')
 
@@ -23,6 +23,7 @@
 
         <!-- Inclure Chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
         <script>
             // Récupérer les données PHP dans JavaScript

@@ -77,6 +77,51 @@ class HomeController extends Controller
 
         return view('analytic', compact('days', 'viewsData', 'contactsData'));
     }
+
+    
+    public function analytics()
+    {
+        $user = auth()->user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if (!$profile) {
+            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
+        }
+
+        // Récupérer les insights du profil
+        $insights = ProfileInsight::where('profile_id', $profile->id)
+            ->selectRaw("DATE(created_at) as date, SUM(views) as views, SUM(contact_exchanged) as contact_exchanged, SUM(contact_downloads) as contact_downloads, SUM(link_taps) as link_taps")
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        // Récupérer toutes les dates manquantes
+        $startDate = $insights->first() ? Carbon::parse($insights->first()->date) : now();
+        $endDate = $insights->last() ? Carbon::parse($insights->last()->date) : now();
+
+        $allDates = collect();
+        for ($date = $startDate; $date <= $endDate; $date->addDay()) {
+            $allDates->push($date->format('d/m/Y'));
+        }
+
+        // Fusionner les données existantes avec les dates manquantes
+        $insights = $allDates->map(function ($date) use ($insights) {
+            $insight = $insights->firstWhere('date', $date);
+            return [
+                'date' => $date,
+                'views' => $insight->views,
+                'contact_exchanged' => $insight->contact_exchanged,
+                'contact_downloads' => $insight->contact_downloads,
+                'link_taps' => $insight->link_taps
+            ];
+        });
+
+        //dd($insights->pluck('date'));
+        dd($insights);
+
+        return view('profiles.analytics', compact('profile', 'insights'));
+    }
+
         
 }
 

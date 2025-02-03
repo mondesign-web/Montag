@@ -20,6 +20,7 @@ Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->
 Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact.ContactListe');
 Route::get('/analytic', [HomeController::class, 'index'])->middleware('auth')->name('analytic');
 //Route::get('/1',  [HomeController, 'index'])->middleware('auth')->name('home.index');
+Route::get('/analytics', [HomeController::class, 'analytics'])->name('profiles.analytics');
 
 
 /*

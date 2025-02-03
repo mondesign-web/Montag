@@ -1,4 +1,5 @@
 @extends('/layout')
+@include('partials.sidebar', ['profile' => $profile])
 
 @section('title', 'Liste des clients')
 
