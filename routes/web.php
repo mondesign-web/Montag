@@ -17,7 +17,8 @@ use App\Http\Controllers\HomeController;
 //Route::get('/', function () { return view('home'); })->middleware(['auth'])->name('home');
 
 Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
-Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact');
+Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact.ContactListe');
+Route::get('/analytic', [HomeController::class, 'index'])->middleware('auth')->name('analytic');
 //Route::get('/1',  [HomeController, 'index'])->middleware('auth')->name('home.index');
 
 
@@ -67,7 +68,9 @@ Route::get('/profiles/{profile}/qrcode', [ProfileController::class, 'generateQrC
 
 
 
-Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middleware(['auth'])->name('profiles.show');
+//Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->middleware(['auth'])->name('profiles.show');
+Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
+
 Route::post('/profiles/{profile}/contact-exchanged', [ProfileController::class, 'contactExchanged'])
     ->name('profiles.contactExchanged');
 Route::post('/profiles/{profile}/link-tap', [ProfileController::class, 'linkTapped'])

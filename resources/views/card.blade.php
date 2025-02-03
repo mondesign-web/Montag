@@ -38,7 +38,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-300 ">
-                            <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
+                            <tr class="bg-white transition-all duration-500">
                                 <td class=" px-5 py-3">
                                     <div class="w-48 flex items-center gap-3">
                                         <img src="https://pagedone.io/asset/uploads/1697536419.png" alt="Floyd image">

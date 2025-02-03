@@ -6,7 +6,7 @@ use App\Models\Profile; // Importation du modèle
 use App\Models\ProfileDocument;
 use App\Models\ProfileInsight; // Importation du modèle
 use App\Models\Contact;
-use App\Models\SocialLinks;
+use App\Models\SocialLink;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -122,7 +122,7 @@ class ProfileController extends Controller
         ]));
 
         // Ajouter les liens sociaux
-        SocialLinks::create([
+        SocialLink::create([
             'profile_id' => $profile->id,
             'facebook' => $request->facebook,
             'instagram' => $request->instagram,
@@ -249,16 +249,20 @@ class ProfileController extends Controller
 
     public function show(Profile $profile)
     {
+        $isOwner = auth()->check() && auth()->id() === $profile->user_id;
+
         $nameUser = $this->getFirstLetter($profile->name);
 
         // Fetch the documents (links and PDFs) associated with this profile
         $documents = $profile->documents;
 
+        $socialLink = $profile->socialLink;
+
         // Incrémenter les vues
         $insights  = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
         $insights->increment('views');
 
-        return view('profiles.show', compact('profile', 'nameUser', 'documents'));
+        return view('profiles.show', compact('profile', 'isOwner', 'nameUser', 'documents', 'socialLink'));
     }
 
     /*
@@ -356,105 +360,122 @@ class ProfileController extends Controller
     }
     */
     public function update(Request $request, Profile $profile)
-{
-    // Validation des données entrantes
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'title' => 'nullable|string|max:255',
-        'bio' => 'nullable|string',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
-        'email' => 'required|email|max:100',
-        'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/',
-        'address' => 'nullable|string|max:255',
-        'links' => 'nullable|array',
-        'links.*' => 'nullable|url',
-        'documents' => 'nullable|array',
-        'documents.*' => 'nullable|mimes:pdf|max:20480',
-        'gallery' => 'nullable|array',
-        'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'social_links' => 'nullable|array', // Ajout des liens sociaux
-        'social_links.*' => 'nullable|url', // Chaque lien doit être une URL valide
-    ]);
-
-    // **Gérer le téléchargement de la nouvelle photo**
-    if ($request->hasFile('photo')) {
-        if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
-            \Storage::disk('public')->delete($profile->photo_url);
+    {
+        // Validation des données entrantes
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
+            'email' => 'required|email|max:100',
+            'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/',
+            'address' => 'nullable|string|max:255',
+            'links' => 'nullable|array',
+            'links.*' => 'nullable|url',
+            'documents' => 'nullable|array',
+            'documents.*' => 'nullable|mimes:pdf|max:20480',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Validation des liens sociaux
+            'facebook' => 'nullable|url',
+            'instagram' => 'nullable|url',
+            'whatsapp' => 'nullable|url',
+            'linkedin' => 'nullable|url',
+            'snapchat' => 'nullable|url',
+            'telegram' => 'nullable|url',
+            'tiktok' => 'nullable|url',
+            'pinterest' => 'nullable|url',
+            'behance' => 'nullable|url',
+            'dribbble' => 'nullable|url',
+            'twiter' => 'nullable|url',
+            'discord' => 'nullable|url',
+            'youtube' => 'nullable|url',
+        ]);
+    
+        // **Gérer le téléchargement de la nouvelle photo**
+        if ($request->hasFile('photo')) {
+            if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
+                \Storage::disk('public')->delete($profile->photo_url);
+            }
+            $profile->photo_url = $request->file('photo')->store('profile_photos', 'public');
         }
-        $profile->photo_url = $request->file('photo')->store('profile_photos', 'public');
-    }
-
-    // **Mettre à jour les données du profil**
-    $profile->update([
-        'name' => $validated['name'],
-        'title' => $validated['title'],
-        'bio' => $validated['bio'],
-        'nfc_tag_id' => $validated['nfc_tag_id'],
-        'email' => $validated['email'],
-        'phone' => $validated['phone'],
-        'address' => $validated['address'],
-    ]);
-
-    // **Gérer les liens sociaux**
-    if ($request->has('social_links')) {
-        // Vérifier si les liens sociaux existent déjà
-        $socialLinks = SocialLinks::where('profile_id', $profile->id)->first();
-
-        if ($socialLinks) {
+    
+        // **Mettre à jour les données du profil**
+        $profile->update([
+            'name' => $validated['name'],
+            'title' => $validated['title'],
+            'bio' => $validated['bio'],
+            'nfc_tag_id' => $validated['nfc_tag_id'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+        ]);
+    
+        // **Gérer les liens sociaux**
+        $socialLinksData = $request->only([
+            'facebook', 'instagram', 'whatsapp', 'linkedin', 'snapchat', 
+            'telegram', 'tiktok', 'pinterest', 'behance', 'dribbble', 
+            'twiter', 'discord', 'youtube'
+        ]);
+    
+        // Vérifier si le profil a déjà des liens sociaux
+        $socialLink = $profile->socialLink;
+    
+        if ($socialLink) {
             // Mettre à jour les liens sociaux existants
-            $socialLinks->update($validated['social_links']);
+            $socialLink->update($socialLinksData);
         } else {
-            // Créer une nouvelle entrée
-            SocialLinks::create(array_merge(['profile_id' => $profile->id], $validated['social_links']));
+            // Créer une nouvelle entrée de liens sociaux
+            $profile->SocialLink()->create($socialLinksData);
         }
-    }
-
-    // **Gérer les liens**
-    if ($request->has('links')) {
-        // Supprimer tous les anciens liens associés au profil
-        ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
-
-        // Ajouter les nouveaux liens
-        foreach (array_filter($validated['links']) as $link) {
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'link',
-                'content' => $link,
-            ]);
+    
+        // **Gérer les liens**
+        if ($request->has('links')) {
+            // Supprimer tous les anciens liens associés au profil
+            ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
+    
+            // Ajouter les nouveaux liens
+            foreach (array_filter($validated['links']) as $link) {
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'link',
+                    'content' => $link,
+                ]);
+            }
         }
-    }
-
-    // **Gérer les documents**
-    if ($request->hasFile('documents')) {
-        foreach ($request->file('documents') as $document) {
-            $path = $document->store('documents', 'public');
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'document',
-                'content' => $path,
-            ]);
+    
+        // **Gérer les documents**
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $document) {
+                $path = $document->store('documents', 'public');
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'document',
+                    'content' => $path,
+                ]);
+            }
         }
-    }
-
-    // **Gérer la galerie**
-    if ($request->hasFile('gallery')) {
-        foreach ($request->file('gallery') as $galleryItem) {
-            $path = $galleryItem->store('gallery', 'public');
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'gallery',
-                'content' => $path,
-            ]);
+    
+        // **Gérer la galerie**
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $galleryItem) {
+                $path = $galleryItem->store('gallery', 'public');
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'gallery',
+                    'content' => $path,
+                ]);
+            }
         }
+    
+        // Rediriger avec un message de succès
+        return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
     }
-
-    // Rediriger avec un message de succès
-    return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
-}
+    
 
     public function destroyDocument($id)
     {
@@ -491,9 +512,9 @@ class ProfileController extends Controller
     public function edit(Profile $profile)
     {
         $documents = $profile->documents;
-        $socialLinks = $profile->socialLinks;
+        $socialLink = $profile->socialLink;
         $nameUser = $this->getFirstLetter($profile->name);
-        return view('profiles.edit', compact('profile', 'documents', 'nameUser', 'socialLinks'));
+        return view('profiles.edit', compact('profile', 'documents', 'nameUser', 'socialLink'));
     }
 
 /*
@@ -587,8 +608,12 @@ public function generateQrCode($profileId)
         Log::error('Le QR Code n\'a pas été trouvé ou supprimé', [
             'qr_code_path' => $profile->qr_code,
         ]);
-    }
+        }
 
+        // Supprimer les relations associées
+        $profile->socialLink()->delete();
+        $profile->documents()->delete();
+        $profile->insights()->delete();
         
         // Supprimez le profil
         $profile->delete();
@@ -669,16 +694,30 @@ public function generateQrCode($profileId)
 
 
     public function getInsights()
-{
-    $user = auth()->user();
+    {
+       /* $user = auth()->user();
 
-    // Vérifier si l'utilisateur a un profil
-    //$profile = Profile::where('user_id', $user->id)->with('insights')->first();
+        // Charger le profil de l'utilisateur connecté
+        $profile = $user->profile;
 
-    // Incrémenter les vues
-    $insights  = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+        // Vérifier si le profil existe
+        if (!$profile) {
+            return redirect()->route('home')->with('error', 'No profile found for the user.');
+        }
 
-    return view('home', compact('profile', 'insights'));
-}
+        // Charger les insights associés au profil
+        $insights = $profile->insights;
+
+        // Retourner les données à la vue 'home'
+        return view('home', compact('profile', 'insights'));
+        */
+         // Récupérer les profils avec leurs insights
+        $profiles = Profile::with('insights')->get();
+
+        return view('home', compact('profiles'));
+    }
+
+ 
+
 }
     

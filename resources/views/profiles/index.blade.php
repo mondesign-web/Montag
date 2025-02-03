@@ -114,7 +114,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-300 ">
                             @foreach ($profiles as $profile)
-                                <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
+                                <tr class="bg-white transition-all duration-500 ">
                                     <td class="p-5 whitespace-nowrap leading-6 font-medium text-gray-900">
                                         <div class="w-48 flex items-center gap-3">
                                             @if (!empty($profile->photo_url) && \Storage::disk('public')->exists($profile->photo_url))

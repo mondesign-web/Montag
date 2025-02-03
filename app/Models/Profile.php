@@ -29,6 +29,23 @@ class Profile extends Model
         'address',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($profile) {
+            // Supprimer les social links
+            $profile->socialLink()->delete();
+
+            // Supprimer les documents
+            $profile->documents()->delete();
+
+            // Supprimer les insights
+            $profile->insights()->delete();
+
+            // Supprimer les contacts
+            $profile->contact()->delete();
+        });
+    }
+
     /*
     protected $casts = [
         'social_links' => 'array',
@@ -48,13 +65,16 @@ class Profile extends Model
     {
         return $this->hasOne(ProfileInsight::class, 'profile_id');
     }
+
+
+
     
     public function contact()
     {
         return $this->hasMany(Contact::class);
     }
    
-    public function socialLinks()
+    public function socialLink()
     {
         return $this->hasOne(SocialLink::class, 'profile_id');
     }

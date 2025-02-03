@@ -185,38 +185,99 @@
                     </div>
                 </div>
                 <ul class="py-4 mt-2 text-gray-700 flex items-center justify-center space-x-6">
-                    @if ($profile->facebook)
+
+                    @if ($socialLink->facebook)
                         <li>
-                            <a href="{{ $profile->facebook }}" target="_blank">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png"
-                                    alt="Facebook" class="w-8 h-8">
+                            <a href="{{ $socialLink->facebook }}" target="_blank">
+                                <img src="{{ asset('img/social_links/facebook.png') }}" alt="Facebook"
+                                    class="w-10 h-10">
                             </a>
                         </li>
                     @endif
-                    @if ($profile->instagram)
+                    @if ($socialLink->instagram)
                         <li>
-                            <a href="{{ $profile->instagram }}" target="_blank">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
-                                    alt="Instagram" class="w-8 h-8">
+                            <a href="{{ $socialLink->instagram }}" target="_blank">
+                                <img src="{{ asset('img/social_links/instagram.png') }}" alt="whatsapp"
+                                    class="w-11 h-11">
                             </a>
                         </li>
                     @endif
-                    @if ($profile->whatsapp)
+                    @if ($socialLink->whatsapp)
                         <li>
-                            <a href="{{ $profile->whatsapp }}" target="_blank">
-                                <img src="https://img.icons8.com/?size=100&id=16713&format=png&color=000000"
-                                    alt="WhatsApp" class="w-8 h-8">
+                            <a href="{{ $socialLink->whatsapp }}" target="_blank">
+                                <img src="{{ asset('img/social_links/whatsapp.png') }}" alt="Instagram"
+                                    class="w-10 h-10">
                             </a>
                         </li>
                     @endif
-                    @if ($profile->linkedin)
+                    @if ($socialLink->snapchat)
                         <li>
-                            <a href="{{ $profile->linkedin }}" target="_blank">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
-                                    alt="LinkedIn" class="w-8 h-8">
+                            <a href="{{ $socialLink->snapchat }}" target="_blank">
+                                <img src="{{ asset('img/social_links/snapchat.png') }}" alt="snapchat"
+                                    class="w-10 h-10">
                             </a>
                         </li>
                     @endif
+                    @if ($socialLink->behance)
+                        <li>
+                            <a href="{{ $socialLink->behance }}" target="_blank">
+                                <img src="{{ asset('img/social_links/behance.png') }}" alt="behance" class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->dribbble)
+                        <li>
+                            <a href="{{ $socialLink->dribbble }}" target="_blank">
+                                <img src="{{ asset('img/social_links/dribbble.png') }}" alt="dribbble"
+                                    class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->youtube)
+                        <li>
+                            <a href="{{ $socialLink->youtube }}" target="_blank">
+                                <img src="{{ asset('img/social_links/youtube.png') }}" alt="youtube" class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->discord)
+                        <li>
+                            <a href="{{ $socialLink->discord }}" target="_blank">
+                                <img src="{{ asset('img/social_links/discord.png') }}" alt="discord" class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->twiter)
+                        <li>
+                            <a href="{{ $socialLink->twiter }}" target="_blank">
+                                <img src="{{ asset('img/social_links/twiter.png') }}" alt="twiter" class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->pinterest)
+                        <li>
+                            <a href="{{ $socialLink->pinterest }}" target="_blank">
+                                <img src="{{ asset('img/social_links/pinterest.png') }}" alt="pinterest"
+                                    class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->tiktok)
+                        <li>
+                            <a href="{{ $socialLink->tiktok }}" target="_blank">
+                                <img src="{{ asset('img/social_links/tiktok.png') }}" alt="tiktok" class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+                    @if ($socialLink->telegram)
+                        <li>
+                            <a href="{{ $socialLink->telegram }}" target="_blank">
+                                <img src="{{ asset('img/social_links/telegram.png') }}" alt="telegram"
+                                    class="w-10 h-10">
+                            </a>
+                        </li>
+                    @endif
+
                 </ul>
                 <div class="p-4 border-t mx-8 my-4 flex justify-center items-center space-x-4 ">
                     <!-- Bouton Add to Contacts -->
@@ -234,26 +295,26 @@
                     <!--/form-->
 
                     <!--div class="modal">
-                                            <div class="modal-content">
-                                                <img src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}"
-                                                    class="avatar">
-                                                <h2>Partager vos informations avec {{ $profile->name }}</h2>
+                                                <div class="modal-content">
+                                                    <img src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}"
+                                                        class="avatar">
+                                                    <h2>Partager vos informations avec {{ $profile->name }}</h2>
 
-                                                <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
-                                                    @csrf
-                                                    <input type="text" name="first_name" placeholder="Prénom" required
-                                                        class="input-field">
-                                                    <input type="text" name="last_name" placeholder="Nom" required class="input-field">
-                                                    <input type="email" name="email" placeholder="Email" required class="input-field">
-                                                    <input type="text" name="phone" placeholder="+212" class="input-field">
-                                                    <button type="submit" class="btn">Partager</button>
-                                                </form>
+                                                    <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="text" name="first_name" placeholder="Prénom" required
+                                                            class="input-field">
+                                                        <input type="text" name="last_name" placeholder="Nom" required class="input-field">
+                                                        <input type="email" name="email" placeholder="Email" required class="input-field">
+                                                        <input type="text" name="phone" placeholder="+212" class="input-field">
+                                                        <button type="submit" class="btn">Partager</button>
+                                                    </form>
 
-                                                <p class="hint">
-                                                    Pressé(e)? Partagez une photo de votre carte de visite en quelques secondes.
-                                                </p>
-                                            </div>
-                                        </div-->
+                                                    <p class="hint">
+                                                        Pressé(e)? Partagez une photo de votre carte de visite en quelques secondes.
+                                                    </p>
+                                                </div>
+                                            </div-->
 
 
 
@@ -334,131 +395,136 @@
 
             </div>
 
-            <!-- Section QR Code -->
-            <div class=" text-white p-6 rounded-md space-y-6 bg-gray-900">
+            @if ($isOwner)
+                <!-- Section QR Code -->
+                <div class=" text-white p-6 rounded-md space-y-6 bg-gray-900">
 
-                <div class="flex items-start justify-center space-x-4">
-                    <div class="w-32 h-32 bg-white flex items-center justify-center rounded-md">
-                        @if ($profile->qr_code)
-                            <img id="qr-code" src="{{ asset('storage/' . $profile->qr_code) }}" alt="Qr code"
-                                class="w-28 h-28">
-                        @endif
+                    <div class="flex items-start justify-center space-x-4">
+                        <div class="w-32 h-32 bg-white flex items-center justify-center rounded-md">
+                            @if ($profile->qr_code)
+                                <img id="qr-code" src="{{ asset('storage/' . $profile->qr_code) }}" alt="Qr code"
+                                    class="w-28 h-28">
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <div class="flex justify-between">
-                    <button onclick="downloadQRCode('png')" class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
-                        Télécharger PNG
-                    </button>
-                    <button onclick="downloadQRCode('jpg')" class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
-                        Télécharger JPG
-                    </button>
-                    <button onclick="downloadAsPDF()" class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
-                        Télécharger PDF
-                    </button>
-                </div>
-                <div class="relative w-full mx-auto">
-                    <input type="text" value="{{ $profile->profile_link }}" id="profile-link"
-                        class="w-full px-4 py-2 text-black rounded-md " readonly />
-                    <button onclick="copyToClipboard()"
-                        class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800 track-link"
-                        title="Copier">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                </div>
-
-
-
-                <!-- Cards -->
-                <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
-                    <!-- Card -->
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                        <div
-                            class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-link" viewBox="0 0 16 16">
-                                <path
-                                    d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z" />
-                                <path
-                                    d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z" />
+                    <div class="flex justify-between">
+                        <button onclick="downloadQRCode('png')"
+                            class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
+                            Télécharger PNG
+                        </button>
+                        <button onclick="downloadQRCode('jpg')"
+                            class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
+                            Télécharger JPG
+                        </button>
+                        <button onclick="downloadAsPDF()" class="w-full bg-yellow-500 text-black py-2 mx-2 rounded-md">
+                            Télécharger PDF
+                        </button>
+                    </div>
+                    <div class="relative w-full mx-auto">
+                        <input type="text" value="{{ $profile->profile_link }}" id="profile-link"
+                            class="w-full px-4 py-2 text-black rounded-md " readonly />
+                        <button onclick="copyToClipboard()"
+                            class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 hover:text-gray-800 track-link"
+                            title="Copier">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                        </div>
-                        <div>
-                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                Total Link Taps
-                            </p>
-                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                {{ $profile->insights->link_taps ?? 0 }}
-                            </p>
-                        </div>
+                        </button>
                     </div>
-                    <!-- Card -->
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                        <div
-                            class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
-                            <svg fill="#22c55e" width="25px" height="25px" viewBox="-3.5 0 32 32" version="1.1"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <title>view</title>
-                                <path
-                                    d="M12.406 13.844c1.188 0 2.156 0.969 2.156 2.156s-0.969 2.125-2.156 2.125-2.125-0.938-2.125-2.125 0.938-2.156 2.125-2.156zM12.406 8.531c7.063 0 12.156 6.625 12.156 6.625 0.344 0.438 0.344 1.219 0 1.656 0 0-5.094 6.625-12.156 6.625s-12.156-6.625-12.156-6.625c-0.344-0.438-0.344-1.219 0-1.656 0 0 5.094-6.625 12.156-6.625zM12.406 21.344c2.938 0 5.344-2.406 5.344-5.344s-2.406-5.344-5.344-5.344-5.344 2.406-5.344 5.344 2.406 5.344 5.344 5.344z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                Card Views
-                            </p>
-                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                {{ $profile->insights->views ?? 0 }}
-                            </p>
-                        </div>
-                    </div>
-                    <!-- Card -->
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                        <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                Contact Exchanged
-                            </p>
-                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                {{ $profile->insights->contact_exchanged ?? 0 }}
-                            </p>
-                        </div>
-                    </div>
-                    <!-- Card -->
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                        <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-person-vcard-fill" viewBox="0 0 20 20">
-                                <path
-                                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                Contact Download
-                            </p>
-                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                {{ $profile->insights->contact_downloads ?? 0 }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div id="copy-notification"
-                    class="fixed bottom-36 right-96 bg-blue-500 text-white text-sm px-4 py-2 rounded shadow-lg hidden">
-                    Lien copié !
-                </div>
-            </div>
 
+
+
+                    <!-- Cards -->
+                    <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
+                        <!-- Card -->
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            <div
+                                class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    fill="currentColor" class="bi bi-link" viewBox="0 0 16 16">
+                                    <path
+                                        d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z" />
+                                    <path
+                                        d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Total Link Taps
+                                </p>
+                                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ $profile->insights->link_taps ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Card -->
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            <div
+                                class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
+                                <svg fill="#22c55e" width="25px" height="25px" viewBox="-3.5 0 32 32" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <title>view</title>
+                                    <path
+                                        d="M12.406 13.844c1.188 0 2.156 0.969 2.156 2.156s-0.969 2.125-2.156 2.125-2.125-0.938-2.125-2.125 0.938-2.156 2.125-2.156zM12.406 8.531c7.063 0 12.156 6.625 12.156 6.625 0.344 0.438 0.344 1.219 0 1.656 0 0-5.094 6.625-12.156 6.625s-12.156-6.625-12.156-6.625c-0.344-0.438-0.344-1.219 0-1.656 0 0 5.094-6.625 12.156-6.625zM12.406 21.344c2.938 0 5.344-2.406 5.344-5.344s-2.406-5.344-5.344-5.344-5.344 2.406-5.344 5.344 2.406 5.344 5.344 5.344z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Card Views
+                                </p>
+                                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ $profile->insights->views ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Card -->
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            <div
+                                class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Contact Exchanged
+                                </p>
+                                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ $profile->insights->contact_exchanged ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Card -->
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            <div
+                                class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 20 20">
+                                    <path
+                                        d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Contact Download
+                                </p>
+                                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ $profile->insights->contact_downloads ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="copy-notification"
+                        class="fixed bottom-36 right-96 bg-blue-500 text-white text-sm px-4 py-2 rounded shadow-lg hidden">
+                        Lien copié !
+                    </div>
+                </div>
+            @endif
 
         </div>
     </div>
