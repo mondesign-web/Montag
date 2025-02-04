@@ -12,10 +12,12 @@ class ProfileInsight extends Model
     protected $fillable = [
         'user_id',
         'profile_id',
+        'date',
         'views',
         'contact_exchanged',
         'contact_downloads',
         'link_taps',
+        'share_links',
     ];
 
     public function profile()

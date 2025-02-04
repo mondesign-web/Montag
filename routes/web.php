@@ -18,7 +18,9 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
 Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact.ContactListe');
-Route::get('/analytic', [HomeController::class, 'index'])->middleware('auth')->name('analytic');
+Route::get('/analytic', [HomeController::class, 'analytic'])->middleware('auth')->name('analytic');
+Route::get('/profile/insights-chart', [HomeController::class, 'insightsChart'])->name('profiles.insightsChart');
+
 //Route::get('/1',  [HomeController, 'index'])->middleware('auth')->name('home.index');
 Route::get('/analytics', [HomeController::class, 'analytics'])->name('profiles.analytics');
 
@@ -76,6 +78,8 @@ Route::post('/profiles/{profile}/contact-exchanged', [ProfileController::class, 
     ->name('profiles.contactExchanged');
 Route::post('/profiles/{profile}/link-tap', [ProfileController::class, 'linkTapped'])
     ->name('profiles.linkTap');
+
+Route::post('/profiles/{profile}/shareLinks', [ProfileController::class, 'shareLinks'])->name('profiles.shareLinks');
 
 //Route::get('/profiles/{profile}', [ProfileController::class, 'show'])->name('profiles.show');
 Route::put('/profiles/{profile}', [ProfileController::class, 'update'])->middleware(['auth'])->name('profiles.update');

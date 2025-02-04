@@ -295,26 +295,26 @@
                     <!--/form-->
 
                     <!--div class="modal">
-                                                <div class="modal-content">
-                                                    <img src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}"
-                                                        class="avatar">
-                                                    <h2>Partager vos informations avec {{ $profile->name }}</h2>
+                                                    <div class="modal-content">
+                                                        <img src="{{ asset('storage/' . $profile->photo_url) }}" alt="{{ $profile->name }}"
+                                                            class="avatar">
+                                                        <h2>Partager vos informations avec {{ $profile->name }}</h2>
 
-                                                    <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="text" name="first_name" placeholder="Prénom" required
-                                                            class="input-field">
-                                                        <input type="text" name="last_name" placeholder="Nom" required class="input-field">
-                                                        <input type="email" name="email" placeholder="Email" required class="input-field">
-                                                        <input type="text" name="phone" placeholder="+212" class="input-field">
-                                                        <button type="submit" class="btn">Partager</button>
-                                                    </form>
+                                                        <form action="{{ route('profiles.contactExchanged', $profile->id) }}" method="POST">
+                                                            @csrf
+                                                            <input type="text" name="first_name" placeholder="Prénom" required
+                                                                class="input-field">
+                                                            <input type="text" name="last_name" placeholder="Nom" required class="input-field">
+                                                            <input type="email" name="email" placeholder="Email" required class="input-field">
+                                                            <input type="text" name="phone" placeholder="+212" class="input-field">
+                                                            <button type="submit" class="btn">Partager</button>
+                                                        </form>
 
-                                                    <p class="hint">
-                                                        Pressé(e)? Partagez une photo de votre carte de visite en quelques secondes.
-                                                    </p>
-                                                </div>
-                                            </div-->
+                                                        <p class="hint">
+                                                            Pressé(e)? Partagez une photo de votre carte de visite en quelques secondes.
+                                                        </p>
+                                                    </div>
+                        </div-->
 
 
 
@@ -385,6 +385,7 @@
 
                         </div>
                     </div>
+
 
                     <!-- Bouton Share My Profile -->
                     <button id="share-button"
@@ -538,7 +539,7 @@
 
     <script>
         //share profile
-        document.getElementById('share-button').addEventListener('click', function() {
+        /*document.getElementById('share-button').addEventListener('click', function() {
             const profileUrl = "{{ route('profiles.show', $profile->id) }}"; // Replace with your profile URL
             const profileTitle = "{{ $profile->name }}'s Profile";
             const profileText = "Check out my profile on this amazing platform!";
@@ -555,7 +556,39 @@
             } else {
                 alert('Sharing is not supported on your browser.');
             }
+        });*/
+
+        document.getElementById('share-button').addEventListener('click', function() {
+            const profileUrl = "{{ route('profiles.show', $profile->id) }}";
+            const profileTitle = "{{ $profile->name }}'s Profile";
+            const profileText = "Check out my profile on this amazing platform!";
+
+            if (navigator.share) {
+                navigator.share({
+                    title: profileTitle,
+                    text: profileText,
+                    url: profileUrl,
+                }).then(() => {
+                    console.log('Profile shared successfully!');
+
+                    // Envoyer la requête AJAX pour incrémenter share_links
+                    fetch("{{ route('profiles.shareLinks', $profile->id) }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({})
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log('Share count updated:', data))
+                        .catch(error => console.error('Error updating share count:', error));
+                }).catch((error) => console.error('Error sharing profile:', error));
+            } else {
+                alert('Sharing is not supported on your browser.');
+            }
         });
+
 
         //track link
         document.addEventListener("DOMContentLoaded", function() {

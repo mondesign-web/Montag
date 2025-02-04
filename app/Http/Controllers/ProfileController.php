@@ -268,95 +268,95 @@ class ProfileController extends Controller
     /*
     public function update(Request $request, Profile $profile)
     {
-    // Validation des données entrantes
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'title' => 'nullable|string|max:255',
-        'bio' => 'nullable|string',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'facebook' => 'nullable|url',
-        'instagram' => 'nullable|url',
-        'whatsapp' => 'nullable|url',
-        'linkedin' => 'nullable|url',
-        'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
-        'email' => 'required|email|max:100',
-        'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/',
-        'address' => 'nullable|string|max:255',
-        'links' => 'nullable|array',
-        'links.*' => 'nullable|url',
-        'documents' => 'nullable|array',
-        'documents.*' => 'nullable|mimes:pdf|max:20480',
-        'gallery' => 'nullable|array', // Ajouter la galerie
-        'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Fichiers d'images pour la galerie
+        // Validation des données entrantes
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'facebook' => 'nullable|url',
+            'instagram' => 'nullable|url',
+            'whatsapp' => 'nullable|url',
+            'linkedin' => 'nullable|url',
+            'nfc_tag_id' => 'required|string|unique:profiles,nfc_tag_id,' . $profile->id,
+            'email' => 'required|email|max:100',
+            'phone' => 'required|string|regex:/^\+?[0-9]{7,15}$/',
+            'address' => 'nullable|string|max:255',
+            'links' => 'nullable|array',
+            'links.*' => 'nullable|url',
+            'documents' => 'nullable|array',
+            'documents.*' => 'nullable|mimes:pdf|max:20480',
+            'gallery' => 'nullable|array', // Ajouter la galerie
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Fichiers d'images pour la galerie
 
-    ]);
+        ]);
 
-    // Gérer le téléchargement de la nouvelle photo
-    if ($request->hasFile('photo')) {
-        if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
-            \Storage::disk('public')->delete($profile->photo_url);
+        // Gérer le téléchargement de la nouvelle photo
+        if ($request->hasFile('photo')) {
+            if ($profile->photo_url && \Storage::disk('public')->exists($profile->photo_url)) {
+                \Storage::disk('public')->delete($profile->photo_url);
+            }
+            $profile->photo_url = $request->file('photo')->store('profile_photos', 'public');
         }
-        $profile->photo_url = $request->file('photo')->store('profile_photos', 'public');
-    }
 
-    // Mettre à jour les données du profil
-    $profile->update([
-        'name' => $validated['name'],
-        'title' => $validated['title'],
-        'bio' => $validated['bio'],
-        'facebook' => $validated['facebook'],
-        'instagram' => $validated['instagram'],
-        'whatsapp' => $validated['whatsapp'],
-        'linkedin' => $validated['linkedin'],
-        'nfc_tag_id' => $validated['nfc_tag_id'],
-        'email' => $validated['email'],
-        'phone' => $validated['phone'],
-        'address' => $validated['address'],
-    ]);
+        // Mettre à jour les données du profil
+        $profile->update([
+            'name' => $validated['name'],
+            'title' => $validated['title'],
+            'bio' => $validated['bio'],
+            'facebook' => $validated['facebook'],
+            'instagram' => $validated['instagram'],
+            'whatsapp' => $validated['whatsapp'],
+            'linkedin' => $validated['linkedin'],
+            'nfc_tag_id' => $validated['nfc_tag_id'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+        ]);
 
-    // **Gérer les liens**
-    if ($request->has('links')) {
-        // Supprimer tous les anciens liens associés au profil
-        ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
+        // **Gérer les liens**
+        if ($request->has('links')) {
+            // Supprimer tous les anciens liens associés au profil
+            ProfileDocument::where('profile_id', $profile->id)->where('type', 'link')->delete();
 
-        // Ajouter les nouveaux liens
-        foreach (array_filter($validated['links']) as $link) {
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'link',
-                'content' => $link,
-            ]);
+            // Ajouter les nouveaux liens
+            foreach (array_filter($validated['links']) as $link) {
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'link',
+                    'content' => $link,
+                ]);
+            }
         }
-    }
 
-    // **Gérer les documents**
-    if ($request->hasFile('documents')) {
-        foreach ($request->file('documents') as $document) {
-            $path = $document->store('documents', 'public');
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'document',
-                'content' => $path,
-            ]);
+        // **Gérer les documents**
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $document) {
+                $path = $document->store('documents', 'public');
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'document',
+                    'content' => $path,
+                ]);
+            }
         }
-    }
 
-    if($request->hasFile('gallery')){
-        foreach($request->files('gallery') as $galleryItem){
-            $path = $galleryItem->store('gallery', 'public');
-            ProfileDocument::create([
-                'user_id' => auth()->id(),
-                'profile_id' => $profile->id,
-                'type' => 'gallery',
-                'content' => $path,
-            ]);
+        if($request->hasFile('gallery')){
+            foreach($request->files('gallery') as $galleryItem){
+                $path = $galleryItem->store('gallery', 'public');
+                ProfileDocument::create([
+                    'user_id' => auth()->id(),
+                    'profile_id' => $profile->id,
+                    'type' => 'gallery',
+                    'content' => $path,
+                ]);
+            }
         }
-    }
 
-    // Rediriger avec un message de succès
-    return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
+        // Rediriger avec un message de succès
+        return redirect()->route('profiles.show', $profile)->with('success', 'Profile updated successfully!');
     }
     */
     public function update(Request $request, Profile $profile)
@@ -629,8 +629,8 @@ public function generateQrCode($profileId)
     public function downloadVCard(Profile $profile)
     {
         /* $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id']);
-    $insights->increment('contact_downloads');
-    */ 
+        $insights->increment('contact_downloads');
+        */ 
         $insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
         $insights->increment('contact_downloads');
         // Initialize vCard
@@ -717,7 +717,28 @@ public function generateQrCode($profileId)
         return view('home', compact('profiles'));
     }
 
- 
 
+    public function shareLinks(Profile $profile)
+    {
+        // Vérifier si un enregistrement d'insights existe, sinon en créer un
+        //$insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
+    
+        // Incrémenter le nombre de partages
+        //$insights->increment('share_links');
+
+        // Vérifier si un enregistrement d'insights existe, sinon en créer un
+        $insights = $profile->insights;
+
+        if (!$insights) {
+            $insights = ProfileInsight::create(['profile_id' => $profile->id, 'share_links' => 1]); // Initialiser avec 1 partage
+        } else {
+            $insights->increment('share_links'); // Incrémenter
+        }
+    
+        dd($insights);
+        return response()->json(['success' => true, 'share_links' => $insights->share_links]);
+        //return redirect()->route('profiles.show', $profile);
+    }
+    
 }
     

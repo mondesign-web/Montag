@@ -29,6 +29,9 @@
                                         <th scope="col"
                                             class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize">
                                             Email </th>
+                                            <th scope="col"
+                                            class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize">
+                                            Date </th>
 
                                     </tr>
                                 </thead>
@@ -45,6 +48,9 @@
                                             </td>
                                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                                                 {{ $contact->email }}
+                                            </td>
+                                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                                                {{ $contact->created_at->format('d/m/Y') }}
                                             </td>
 
                                         </tr>
