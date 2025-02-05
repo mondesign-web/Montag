@@ -16,28 +16,39 @@
             </div>
             <div class="my-2 bg-gray-600 h-[1px]"></div>
         </div>
+        
         <a href="{{ route('home') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-house-door-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
         </a>
+
         <a href="{{ route('profiles.index') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-credit-card-2-front-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">My Card</span>
         </a>
-        
-        <a href="{{ route('contact.ContactListe', $profile->id)}}"
+
+        <a href="{{ isset($profile) ? route('contact.ContactListe', $profile->id) : route('profiles.create') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-person-vcard-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Contact Manager</span>
         </a>
-        <a href="{{ route('analytic') }}"
+
+        <a href="{{ isset($profile) ? route('profiles.insightsChart') : route('profiles.create') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-graph-up-arrow"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Analytics</span>
         </a>
-        <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+
+        <a href="{{ route('profiles.link') }}"
+            class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+            <i class="bi bi-box-arrow-up-right"></i>
+            <span class="text-[15px] ml-4 text-gray-200 font-bold">Link</span>
+
+        </a>
+
+        <!--div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
             onclick="dropdown()">
             <i class="bi bi-chat-left-text-fill"></i>
             <div class="flex justify-between w-full items-center">
@@ -56,7 +67,7 @@
 
             <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">QR code</h1>
 
-        </div>
+        </div-->
 
         <a href="{{ route('logout') }}"
             onclick="event.preventDefault(); this.removeAttribute('onclick'); document.getElementById('logout-form').submit();"

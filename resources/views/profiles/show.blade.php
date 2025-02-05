@@ -439,7 +439,7 @@
 
                     <!-- Cards -->
                     <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
-                        <!-- Card -->
+                        
                         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                             <div
                                 class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
@@ -460,7 +460,7 @@
                                 </p>
                             </div>
                         </div>
-                        <!-- Card -->
+                        
                         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                             <div
                                 class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
@@ -481,7 +481,7 @@
                                 </p>
                             </div>
                         </div>
-                        <!-- Card -->
+                        
                         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                             <div
                                 class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
@@ -500,7 +500,7 @@
                                 </p>
                             </div>
                         </div>
-                        <!-- Card -->
+                        
                         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                             <div
                                 class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
@@ -516,6 +516,24 @@
                                 </p>
                                 <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
                                     {{ $profile->insights->contact_downloads ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                            <div class="p-3 mr-4 text-pink-500 bg-pink-100 rounded-full dark:text-teal-100 dark:bg-pink-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-share-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Share Profile
+                                </p>
+                                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ $profile->insights->share_links ?? 0 }}
                                 </p>
                             </div>
                         </div>
@@ -558,6 +576,7 @@
             }
         });*/
 
+        /*
         document.getElementById('share-button').addEventListener('click', function() {
             const profileUrl = "{{ route('profiles.show', $profile->id) }}";
             const profileTitle = "{{ $profile->name }}'s Profile";
@@ -588,6 +607,41 @@
                 alert('Sharing is not supported on your browser.');
             }
         });
+        */
+
+        document.getElementById('share-button').addEventListener('click', function() {
+        const profileUrl = "{{ route('profiles.show', $profile->id) }}";
+        const profileTitle = "{{ $profile->name }}'s Profile";
+        const profileText = "Check out my profile on this amazing platform!";
+
+        if (navigator.share) {
+            navigator.share({
+                title: profileTitle,
+                text: profileText,
+                url: profileUrl,
+            }).then(() => {
+                console.log('Profile shared successfully!');
+
+                // Requête AJAX pour incrémenter share_links
+                fetch("{{ route('profiles.shareLinks', $profile->id) }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Share count updated:', data);
+                        //alert("Profile shared! Total shares: " + data.share_links);
+                    })
+                    .catch(error => console.error('Error updating share count:', error));
+            }).catch((error) => console.error('Error sharing profile:', error));
+        } else {
+            alert('Sharing is not supported on your browser.');
+        }
+    });
 
 
         //track link

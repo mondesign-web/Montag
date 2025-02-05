@@ -718,7 +718,7 @@ public function generateQrCode($profileId)
     }
 
 
-    public function shareLinks(Profile $profile)
+    /*public function shareLinks(Profile $profile)
     {
         // Vérifier si un enregistrement d'insights existe, sinon en créer un
         //$insights = $profile->insights ?? ProfileInsight::create(['profile_id' => $profile->id]);
@@ -735,10 +735,31 @@ public function generateQrCode($profileId)
             $insights->increment('share_links'); // Incrémenter
         }
     
-        dd($insights);
+        //dd($insights);
         return response()->json(['success' => true, 'share_links' => $insights->share_links]);
         //return redirect()->route('profiles.show', $profile);
     }
-    
+    */
+
+    public function shareLinks(Profile $profile)
+    {
+        \Log::info("Requête AJAX reçue pour le profil ID: " . $profile->id);
+
+        // Vérifier si un enregistrement d'insights existe, sinon en créer un
+        $insights = $profile->insights;
+
+        if (!$insights) {
+            \Log::info("Aucun insight trouvé, création d'un nouvel enregistrement...");
+            $insights = ProfileInsight::create(['profile_id' => $profile->id, 'share_links' => 1]); // Initialiser avec 1 partage
+        } else {
+            \Log::info("Insight trouvé, incrémentation de share_links...");
+            $insights->increment('share_links'); // Incrémenter
+        }
+
+        \Log::info("Nouvelle valeur de share_links: " . $insights->share_links);
+
+        return response()->json(['success' => true, 'share_links' => $insights->share_links]);
+    }
+
 }
     
