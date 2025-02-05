@@ -216,101 +216,101 @@ class HomeController extends Controller
 */  
 
 /*
-public function analytics()
-{
-    $user = auth()->user();
-    $profile = Profile::where('user_id', $user->id)->first();
+    public function analytics()
+    {
+        $user = auth()->user();
+        $profile = Profile::where('user_id', $user->id)->first();
 
-    if (!$profile) {
-        return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
-    }
+        if (!$profile) {
+            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
+        }
 
-    // Récupérer les statistiques du profil
-    $insightsRaw = ProfileInsight::where('profile_id', $profile->id)
-        ->selectRaw("DATE(created_at) as date, SUM(views) as views, SUM(contact_exchanged) as contact_exchanged, SUM(contact_downloads) as contact_downloads, SUM(link_taps) as link_taps")
-        ->groupBy('date')
-        ->orderBy('date', 'ASC')
-        ->get();
+        // Récupérer les statistiques du profil
+        $insightsRaw = ProfileInsight::where('profile_id', $profile->id)
+            ->selectRaw("DATE(created_at) as date, SUM(views) as views, SUM(contact_exchanged) as contact_exchanged, SUM(contact_downloads) as contact_downloads, SUM(link_taps) as link_taps")
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->get();
 
-    // Transformer les données en une collection clé-valeur par date
-    $insightsByDate = $insightsRaw->keyBy('date');
+        // Transformer les données en une collection clé-valeur par date
+        $insightsByDate = $insightsRaw->keyBy('date');
 
-    // Définir les dates de début et de fin
-    $startDate = Carbon::parse($insightsRaw->first()->date ?? now());
-    $endDate = Carbon::now();
+        // Définir les dates de début et de fin
+        $startDate = Carbon::parse($insightsRaw->first()->date ?? now());
+        $endDate = Carbon::now();
 
-    // Générer toutes les dates entre le début et la fin
-    $allDates = collect();
-    for ($date = $startDate; $date <= $endDate; $date->addDay()) {
-        $allDates->push($date->format('Y-m-d'));
-    }
+        // Générer toutes les dates entre le début et la fin
+        $allDates = collect();
+        for ($date = $startDate; $date <= $endDate; $date->addDay()) {
+            $allDates->push($date->format('Y-m-d'));
+        }
 
-    // Remplir les dates manquantes avec des valeurs par défaut ou des données existantes
-    $insights = $allDates->map(function ($date) use ($insightsByDate) {
-        $insight = $insightsByDate->get($date); // Récupérer les données pour la date
+        // Remplir les dates manquantes avec des valeurs par défaut ou des données existantes
+        $insights = $allDates->map(function ($date) use ($insightsByDate) {
+            $insight = $insightsByDate->get($date); // Récupérer les données pour la date
 
-        return [
-            'date' => Carbon::parse($date)->format('d/m/Y'), // Formater la date au format européen
-            'views' => $insight->views ?? 0,
-            'contact_exchanged' => $insight->contact_exchanged ?? 0,
-            'contact_downloads' => $insight->contact_downloads ?? 0,
-            'link_taps' => $insight->link_taps ?? 0,
-        ];
-    });
+            return [
+                'date' => Carbon::parse($date)->format('d/m/Y'), // Formater la date au format européen
+                'views' => $insight->views ?? 0,
+                'contact_exchanged' => $insight->contact_exchanged ?? 0,
+                'contact_downloads' => $insight->contact_downloads ?? 0,
+                'link_taps' => $insight->link_taps ?? 0,
+            ];
+        });
 
-    dd($insights);
-    return view('profiles.analytics', compact('profile', 'insights'));
-}  
+        dd($insights);
+        return view('profiles.analytics', compact('profile', 'insights'));
+    }  
  */
 
 
- public function analytics()
- {
-     $user = auth()->user();
-     $profile = Profile::where('user_id', $user->id)->first();
- 
-     if (!$profile) {
-         return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
-     }
- 
-     // Récupérer les données brutes depuis la base
-     $rawData = ProfileInsight::where('profile_id', $profile->id)
-         ->orderBy('created_at', 'ASC')
-         ->get();
- 
-     // Déterminer la première et la dernière date
-     $startDate = Carbon::parse($rawData->first()->created_at ?? now());
-     $endDate = Carbon::now();
- 
-     // Préparer un tableau de résultats avec des valeurs par défaut
-     $results = [];
-     for ($date = $startDate; $date <= $endDate; $date->addDay()) {
-         $results[$date->format('Y-m-d')] = [
-             'date' => $date->format('d/m/Y'),
-             'views' => 0,
-             'contact_exchanged' => 0,
-             'contact_downloads' => 0,
-             'link_taps' => 0,
-         ];
-     }
- 
-     // Répartir les données brutes sur les bons jours
-     foreach ($rawData as $data) {
-         $dateKey = Carbon::parse($data->created_at)->format('Y-m-d');
-         if (isset($results[$dateKey])) {
-             $results[$dateKey]['views'] += $data->views;
-             $results[$dateKey]['contact_exchanged'] += $data->contact_exchanged;
-             $results[$dateKey]['contact_downloads'] += $data->contact_downloads;
-             $results[$dateKey]['link_taps'] += $data->link_taps;
-         }
-     }
- 
-     // Convertir en collection pour passer à la vue
-     $insights = collect(array_values($results));
- 
-     dd($insights);
-     return view('profiles.analytics', compact('profile', 'insights'));
- }
+    public function analytics()
+    {
+        $user = auth()->user();
+        $profile = Profile::where('user_id', $user->id)->first();
+    
+        if (!$profile) {
+            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
+        }
+    
+        // Récupérer les données brutes depuis la base
+        $rawData = ProfileInsight::where('profile_id', $profile->id)
+            ->orderBy('created_at', 'ASC')
+            ->get();
+    
+        // Déterminer la première et la dernière date
+        $startDate = Carbon::parse($rawData->first()->created_at ?? now());
+        $endDate = Carbon::now();
+    
+        // Préparer un tableau de résultats avec des valeurs par défaut
+        $results = [];
+        for ($date = $startDate; $date <= $endDate; $date->addDay()) {
+            $results[$date->format('Y-m-d')] = [
+                'date' => $date->format('d/m/Y'),
+                'views' => 0,
+                'contact_exchanged' => 0,
+                'contact_downloads' => 0,
+                'link_taps' => 0,
+            ];
+        }
+    
+        // Répartir les données brutes sur les bons jours
+        foreach ($rawData as $data) {
+            $dateKey = Carbon::parse($data->created_at)->format('Y-m-d');
+            if (isset($results[$dateKey])) {
+                $results[$dateKey]['views'] += $data->views;
+                $results[$dateKey]['contact_exchanged'] += $data->contact_exchanged;
+                $results[$dateKey]['contact_downloads'] += $data->contact_downloads;
+                $results[$dateKey]['link_taps'] += $data->link_taps;
+            }
+        }
+    
+        // Convertir en collection pour passer à la vue
+        $insights = collect(array_values($results));
+    
+        dd($insights);
+        return view('profiles.analytics', compact('profile', 'insights'));
+    }
 
 
     /*public function analytics()
@@ -371,6 +371,33 @@ public function analytics()
         return view('profiles.insights_chart', compact('profile', 'data'));
     }
 
+    public function chartHome(){
+
+        $user = auth()->user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if(!$profile){
+            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé');
+        }
+
+        //récupérer les insights du profil
+        $insights = ProfileInsight::where('profile_id', $profile->id)->first();
+
+        if(!$insights){
+            return redirect()->route('profiles.index')->with('error', 'Aucune donnée trouvé');
+        }
+
+        $data = [
+            'views' => $insights->views,
+            'contact_downloads' => $insights->contact_downloads,
+            'contact_exchanged' => $insights->contact_exchanged,
+            'link_taps' => $insights->link_taps,
+            'share_links' => $insights->share_links,
+        ];
+
+        dd($data);
+        return view('home', compact('profile', 'data'));
+    }
 }
 
 

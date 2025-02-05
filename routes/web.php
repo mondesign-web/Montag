@@ -17,6 +17,7 @@ use App\Http\Controllers\HomeController;
 //Route::get('/', function () { return view('home'); })->middleware(['auth'])->name('home');
 
 Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
+Route::get('/', [HomeController::class, 'chartHome'])->middleware('auth')->name('home');
 Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact.ContactListe');
 Route::get('/analytic', [HomeController::class, 'analytic'])->middleware('auth')->name('analytic');
 Route::get('/profile/insights-chart', [HomeController::class, 'insightsChart'])->name('profiles.insightsChart');
@@ -54,7 +55,9 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-Route::get('/profiles/list', [ProfileController::class, 'ShowLink'])->middleware(['auth'])->name('profiles.link');
+Route::get('/profiles/link', [ProfileController::class, 'ShowLink'])->middleware(['auth'])->name('profiles.link');
+//Route::get('/profiles/{profile}/link', [ProfileController::class, 'ShowLink'])->name('profiles.link');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profiles/createOld', [ProfileController::class, 'create'])->name('profiles.createOld');
@@ -88,9 +91,9 @@ Route::delete('/gallery/{id}', [ProfileController::class, 'destroyGellery'])->na
 
 Route::get('/profiles/{profile}/edit', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profiles.edit');
 
-/*
+
 Route::get('/test2', function(){
-    return view('test2');
+    return view('test');
 });
-*/
+
 require __DIR__.'/auth.php';

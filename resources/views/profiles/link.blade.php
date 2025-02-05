@@ -4,11 +4,8 @@
 
 @section('content')
 
-
-    <div>
-       
+    <div class="flex justify-center mt-10">
         <div class="bg-gray-900 text-white p-6 rounded-md space-y-6">
-
             <div class="flex items-start justify-center space-x-4">
                 <div class="w-32 h-32 bg-white flex items-center justify-center rounded-md">
                     @if ($profile->qr_code)
@@ -45,18 +42,27 @@
                 Lien copié !
             </div>
         </div>
-
-        
-        
-
     </div>
 
+    <!--div class="flex justify-center mt-10">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-md text-center">
+               
+                <img src="{{ asset($profile->qr_code) }}" alt="QR Code" class="mx-auto mb-4"
+                    style="width: 150px; height: 150px;">
 
-    
+                
+                <div class="flex justify-center space-x-4">
+                    <button class="bg-yellow-500 px-4 py-2 rounded text-white">Télécharger PNG</button>
+                    <button class="bg-yellow-500 px-4 py-2 rounded text-white">Télécharger JPG</button>
+                    <button class="bg-yellow-500 px-4 py-2 rounded text-white">Télécharger PDF</button>
+                </div>
 
-
-
-
-
+                
+                <div class="mt-4">
+                    <input type="text" value="{{ route('profiles.show', $profile->id) }}" id="profileLink"
+                        class="w-full px-4 py-2 border rounded-lg text-center" readonly>
+                </div>
+            </div>
+        </div-->
 
 @endsection

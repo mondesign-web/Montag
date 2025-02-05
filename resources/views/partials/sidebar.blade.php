@@ -23,7 +23,7 @@
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
         </a>
 
-        <a href="{{ route('profiles.index') }}"
+        <a href="{{ isset($profile) ? route('profiles.index') : route('profiles.create') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-credit-card-2-front-fill"></i>
             <span class="text-[15px] ml-4 text-gray-200 font-bold">My Card</span>
@@ -41,13 +41,13 @@
             <span class="text-[15px] ml-4 text-gray-200 font-bold">Analytics</span>
         </a>
 
-        <a href="{{ route('profiles.link') }}"
+        <a href="{{ isset($profile) ? route('profiles.link') : route('profiles.create') }}"
             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
             <i class="bi bi-box-arrow-up-right"></i>
-            <span class="text-[15px] ml-4 text-gray-200 font-bold">Link</span>
-
+            <span class="text-[15px] ml-4 text-gray-200 font-bold">Link & Qrcode</span>
         </a>
 
+        
         <!--div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
             onclick="dropdown()">
             <i class="bi bi-chat-left-text-fill"></i>

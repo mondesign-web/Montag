@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
+    
     public function boot()
     {
         Schema::defaultStringLength(191); // Définit la longueur maximale des chaînes d'index
@@ -31,4 +32,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('profile', auth()->user()->profile ?? null);
         });
     }
+        
+
+        
 }

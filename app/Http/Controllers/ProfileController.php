@@ -621,10 +621,22 @@ public function generateQrCode($profileId)
         return redirect()->route('profiles.index')->with('success', 'Profil supprimé avec succès.');
     }
 
-    public function ShowLink(Profile $profile)
+   
+    public function ShowLink()
     {
+        $user = auth()->user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        // Vérifier si le profil existe
+        if (!$profile) {
+            return redirect()->route('profiles.index')->with('error', 'Profil introuvable.');
+        }
+        
         return view('profiles.link', compact('profile'));
     }
+
+
+    
 
     public function downloadVCard(Profile $profile)
     {
