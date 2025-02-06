@@ -16,8 +16,10 @@ use App\Http\Controllers\HomeController;
 
 //Route::get('/', function () { return view('home'); })->middleware(['auth'])->name('home');
 
-Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
+//Route::get('/', [ProfileController::class, 'getInsights'])->middleware('auth')->name('home');
 Route::get('/', [HomeController::class, 'chartHome'])->middleware('auth')->name('home');
+//Route::get('/', [HomeController::class, 'home'])->middleware('auth')->name('home');
+
 Route::get('/contactList/{profile}', [ProfileController::class, 'ContactList'])->middleware('auth')->name('contact.ContactListe');
 Route::get('/analytic', [HomeController::class, 'analytic'])->middleware('auth')->name('analytic');
 Route::get('/profile/insights-chart', [HomeController::class, 'insightsChart'])->name('profiles.insightsChart');

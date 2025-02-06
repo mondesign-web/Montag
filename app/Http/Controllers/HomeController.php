@@ -373,31 +373,79 @@ class HomeController extends Controller
 
     public function chartHome(){
 
+        die('Fonction exécutée');
+
         $user = auth()->user();
         $profile = Profile::where('user_id', $user->id)->first();
-
-        if(!$profile){
-            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé');
+    
+        if (!$profile) {
+            return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
         }
-
-        //récupérer les insights du profil
+    
+        // Récupérer les insights du profil
         $insights = ProfileInsight::where('profile_id', $profile->id)->first();
-
-        if(!$insights){
-            return redirect()->route('profiles.index')->with('error', 'Aucune donnée trouvé');
+    
+        // Vérifier si les insights existent
+        if (!$insights) {
+            // Initialiser les valeurs à zéro pour éviter l'erreur
+            $data = [
+                'views' => 0,
+                'contact_downloads' => 0,
+                'contact_exchanged' => 0,
+                'link_taps' => 0,
+                'share_links' => 0,
+            ];
+        } else {
+            // Si les insights existent, récupérer les valeurs
+            $data = [
+                'views' => $insights->views,
+                'contact_downloads' => $insights->contact_downloads,
+                'contact_exchanged' => $insights->contact_exchanged,
+                'link_taps' => $insights->link_taps,
+                'share_links' => $insights->share_links,
+            ];
         }
-
-        $data = [
-            'views' => $insights->views,
-            'contact_downloads' => $insights->contact_downloads,
-            'contact_exchanged' => $insights->contact_exchanged,
-            'link_taps' => $insights->link_taps,
-            'share_links' => $insights->share_links,
-        ];
-
+    
         dd($data);
         return view('home', compact('profile', 'data'));
     }
+        
+
+        /*
+        public function home()
+        {
+            die('Fonction exécutée');
+            $user = auth()->user();
+            $profile = Profile::where('user_id', $user->id)->first();
+        
+            if (!$profile) {
+                return redirect()->route('profiles.index')->with('error', 'Aucun profil trouvé.');
+            }
+        
+            // Récupérer les insights du profil
+            $insights = ProfileInsight::where('profile_id', $profile->id)->first();
+        
+            $data = $insights ? [
+                'views' => $insights->views,
+                'contact_downloads' => $insights->contact_downloads,
+                'contact_exchanged' => $insights->contact_exchanged,
+                'link_taps' => $insights->link_taps,
+                'share_links' => $insights->share_links,
+            ] : [
+                'views' => 0,
+                'contact_downloads' => 0,
+                'contact_exchanged' => 0,
+                'link_taps' => 0,
+                'share_links' => 0,
+            ];
+        
+            // Récupérer d'autres insights pour les graphiques si nécessaire
+            $insightsData = ProfileInsight::where('profile_id', $profile->id)->get();
+        
+            return view('home', compact('profile', 'data', 'insightsData'));
+        }
+        */
+    
 }
 
 

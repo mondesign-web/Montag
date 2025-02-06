@@ -705,9 +705,9 @@ public function generateQrCode($profileId)
     }
 
 
-    public function getInsights()
+    /*public function getInsights()
     {
-       /* $user = auth()->user();
+        $user = auth()->user();
 
         // Charger le profil de l'utilisateur connecté
         $profile = $user->profile;
@@ -722,12 +722,12 @@ public function generateQrCode($profileId)
 
         // Retourner les données à la vue 'home'
         return view('home', compact('profile', 'insights'));
-        */
+       
          // Récupérer les profils avec leurs insights
         $profiles = Profile::with('insights')->get();
 
         return view('home', compact('profiles'));
-    }
+    } */
 
 
     /*public function shareLinks(Profile $profile)
